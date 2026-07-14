@@ -1496,13 +1496,177 @@
             </div>
 
           {%- when 'card_about' -%}
-            <div class="nexus-about-view">
-              {%- if block.settings.about_heading != blank -%}
-                <h2>{{ block.settings.about_heading }}</h2>
+            {%- assign ab_bg_opacity = block.settings.section_bg_opacity | times: 1.0 | divided_by: 100 -%}
+            <div class="fn-section-{{ block.id }}">
+              {%- if block.settings.section_bg != blank -%}
+                <div class="fn-section-bg-image" style="background-image: url('{{ block.settings.section_bg | image_url: width: 1920 }}'); opacity: {{ ab_bg_opacity }};"></div>
               {%- endif -%}
-              {%- if block.settings.about_body != blank -%}
-                <p>{{ block.settings.about_body }}</p>
-              {%- endif -%}
+
+              <div class="ab-section-{{ block.id }}">
+              <!-- HERO -->
+              <div class="ab-hero">
+                {%- if block.settings.hero_bg != blank -%}
+                  <div class="ab-hero__bg" style="background-image:url('{{ block.settings.hero_bg | image_url: width: 1920 }}');"></div>
+                {%- endif -%}
+                <div class="ab-hero__content">
+                  <div class="ab-hero__tag">{{ block.settings.hero_tag | default: "MORE THAN MERCH. IT'S A LIFESTYLE." }}</div>
+                  <h2 class="ab-hero__title">{{ block.settings.hero_heading | default: 'ABOUT US' | replace: ' ', '<br>' }}</h2>
+                  <p class="ab-hero__desc">{{ block.settings.hero_desc | default: "At Booyah! Merchant, we live and breathe Free Fire. We create premium-quality merchandise for true survivors who don't just play the game, they represent it." }}</p>
+                  {%- if block.settings.hero_cta_link != blank -%}
+                    <a href="{{ block.settings.hero_cta_link }}" class="ab-hero__cta">
+                      {{ block.settings.hero_cta_text | default: 'OUR STORY' }}
+                      <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.59 5.59L12 20l8-8z"/></svg>
+                    </a>
+                  {%- endif -%}
+                </div>
+                {%- if block.settings.hero_characters != blank -%}
+                  <div class="ab-hero__characters">
+                    <img src="{{ block.settings.hero_characters | image_url: width: 1200 }}" alt="">
+                  </div>
+                {%- endif -%}
+              </div>
+
+              <!-- MISSION BAR -->
+              <div class="ab-mission"{% if block.settings.mission_bg != blank %} style="background-image:url('{{ block.settings.mission_bg | image_url: width: 1920 }}');background-size:cover;background-position:center;"{% endif %}>
+                <div class="ab-mission__text">
+                  <h3>{{ block.settings.mission_title | default: 'OUR MISSION' }}</h3>
+                  <p>{{ block.settings.mission_desc | default: 'To deliver high-quality, stylish, and exclusive Free Fire merchandise that lets players express their passion, stand out, and feel like legends in real life.' }}</p>
+                </div>
+                <div class="ab-mission__cards">
+                  {%- for i in (1..4) -%}
+                    {%- assign mt = 'mission_' | append: i | append: '_title' -%}
+                    {%- assign md = 'mission_' | append: i | append: '_desc' -%}
+                    {%- assign mi = 'mission_' | append: i | append: '_icon' -%}
+                    {%- if block.settings[mt] != blank -%}
+                      <div class="ab-mission-card">
+                        <div class="ab-mission-card__icon">
+                          {%- if block.settings[mi] != blank -%}
+                            <img src="{{ block.settings[mi] | image_url: width: 60 }}" alt="">
+                          {%- else -%}
+                            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                          {%- endif -%}
+                        </div>
+                        <h4>{{ block.settings[mt] }}</h4>
+                        <p>{{ block.settings[md] }}</p>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+
+              <!-- WHO WE ARE -->
+              <div class="ab-who">
+                {%- if block.settings.who_image != blank -%}
+                  <div class="ab-who__img">
+                    <img src="{{ block.settings.who_image | image_url: width: 800 }}" alt="">
+                  </div>
+                {%- endif -%}
+                <div class="ab-who__content">
+                  <h3>{{ block.settings.who_heading | default: 'WHO WE ARE' | replace: ' ', '<br>' }}</h3>
+                  <p>{{ block.settings.who_desc | default: "We are a team of passionate gamers and creators who understand the Free Fire universe inside out. Every product we craft is inspired by the game, built for quality, and inspired by the spirit of Booyah!" }}</p>
+                  <div class="ab-stats">
+                    {%- for i in (1..4) -%}
+                      {%- assign sn = 'stat_' | append: i | append: '_num' -%}
+                      {%- assign sl = 'stat_' | append: i | append: '_label' -%}
+                      {%- if block.settings[sn] != blank -%}
+                        <div class="ab-stat">
+                          <span class="ab-stat__num">{{ block.settings[sn] }}</span>
+                          <span class="ab-stat__label">{{ block.settings[sl] }}</span>
+                        </div>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                  {%- if block.settings.who_cta_link != blank -%}
+                    <a href="{{ block.settings.who_cta_link }}" class="ab-who__cta">
+                      {{ block.settings.who_cta_text | default: 'JOIN OUR JOURNEY' }}
+                      <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.59 5.59L12 20l8-8z"/></svg>
+                    </a>
+                  {%- endif -%}
+                </div>
+              </div>
+
+              <!-- WHY CHOOSE -->
+              <div class="ab-why">
+                <h3 class="ab-why__title">{{ block.settings.why_title | default: 'WHY CHOOSE <span>BOOYAH!</span> MERCHANT?' }}</h3>
+                <div class="ab-why__grid">
+                  {%- for i in (1..6) -%}
+                    {%- assign wt = 'why_' | append: i | append: '_title' -%}
+                    {%- assign wd = 'why_' | append: i | append: '_desc' -%}
+                    {%- assign wi = 'why_' | append: i | append: '_icon' -%}
+                    {%- if block.settings[wt] != blank -%}
+                      <div class="ab-why-card">
+                        <div class="ab-why-card__icon">
+                          {%- if block.settings[wi] != blank -%}
+                            <img src="{{ block.settings[wi] | image_url: width: 60 }}" alt="">
+                          {%- else -%}
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                          {%- endif -%}
+                        </div>
+                        <h4>{{ block.settings[wt] }}</h4>
+                        <p>{{ block.settings[wd] }}</p>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+
+              <!-- BANNER -->
+              <div class="ab-banner">
+                {%- if block.settings.banner_bg != blank -%}
+                  <div class="ab-banner__bg" style="background-image:url('{{ block.settings.banner_bg | image_url: width: 1920 }}');"></div>
+                {%- endif -%}
+                {%- if block.settings.banner_char_left != blank or block.settings.banner_char_right != blank -%}
+                  <div class="ab-banner__characters">
+                    {%- if block.settings.banner_char_left != blank -%}
+                      <img src="{{ block.settings.banner_char_left | image_url: width: 600 }}" alt="">
+                    {%- endif -%}
+                    {%- if block.settings.banner_char_right != blank -%}
+                      <img src="{{ block.settings.banner_char_right | image_url: width: 600 }}" alt="">
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+                <div class="ab-banner__content">
+                  <h3>{{ block.settings.banner_tag | default: "WE DON'T JUST FOLLOW THE GAME." }}</h3>
+                  <h2>{{ block.settings.banner_heading | default: 'WE ARE THE GAME.' | replace: ' ', '<br>' }} <span>{{ block.settings.banner_accent | default: 'BOOYAH!' }}</span></h2>
+                  {%- if block.settings.banner_cta_link != blank -%}
+                    <a href="{{ block.settings.banner_cta_link }}" class="ab-banner__cta">
+                      {{ block.settings.banner_cta_text | default: 'SHOP LIMITED EDITIONS' }}
+                      <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.59 5.59L12 20l8-8z"/></svg>
+                    </a>
+                  {%- endif -%}
+                </div>
+              </div>
+
+              <!-- BOTTOM BAR -->
+              <div class="le-bottom-bar">
+                <div class="le-bottom-features">
+                  {%- for i in (1..4) -%}
+                    {%- assign bt = 'bottom_feat_' | append: i | append: '_title' -%}
+                    {%- assign bd = 'bottom_feat_' | append: i | append: '_desc' -%}
+                    {%- assign bi = 'bottom_feat_' | append: i | append: '_icon' -%}
+                    {%- if block.settings[bt] != blank -%}
+                      <div class="le-bottom-feat">
+                        <div class="le-bottom-feat__icon">
+                          {%- if block.settings[bi] != blank -%}
+                            <img src="{{ block.settings[bi] | image_url: width: 60 }}" alt="" style="width:100%;height:100%;object-fit:contain;">
+                          {%- else -%}
+                            {%- if i == 1 -%}<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                            {%- elsif i == 2 -%}<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                            {%- elsif i == 3 -%}<svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                            {%- else -%}<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+                            {%- endif -%}
+                          {%- endif -%}
+                        </div>
+                        <div class="le-bottom-feat__text">
+                          <h5>{{ block.settings[bt] }}</h5>
+                          <p>{{ block.settings[bd] }}</p>
+                        </div>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
             </div>
 
           {%- when 'card_custom' -%}
@@ -3265,25 +3429,99 @@
         { "type": "text", "id": "badge", "label": "Badge Text", "default": "ABOUT US" },
         { "type": "image_picker", "id": "card_image", "label": "Card Background Image" },
         { "type": "color", "id": "glow_color", "label": "Glow Color", "default": "#FF7A00" },
-        {
-          "type": "select",
-          "id": "position",
-          "label": "Position",
-          "options": [
-            { "value": "left", "label": "Left" },
-            { "value": "right", "label": "Right" }
-          ],
-          "default": "right"
-        },
+        { "type": "select", "id": "position", "label": "Position", "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }], "default": "right" },
         { "type": "text", "id": "view_title", "label": "View Title", "default": "ABOUT US" },
         { "type": "text", "id": "view_subtitle", "label": "View Subtitle", "default": "KNOW MORE ABOUT US" },
-        { "type": "text", "id": "about_heading", "label": "About Heading", "default": "WHO WE ARE" },
-        {
-          "type": "textarea",
-          "id": "about_body",
-          "label": "About Body",
-          "default": "We are a team of passionate anime enthusiasts."
-        }
+
+        { "type": "header", "content": "Section Background" },
+        { "type": "image_picker", "id": "section_bg", "label": "Full Section Background Image" },
+        { "type": "range", "id": "section_bg_opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "label": "Background Image Opacity", "default": 15 },
+
+        { "type": "header", "content": "Hero Section" },
+        { "type": "image_picker", "id": "hero_bg", "label": "Hero Background Image" },
+        { "type": "image_picker", "id": "hero_characters", "label": "Hero Characters Image" },
+        { "type": "text", "id": "hero_tag", "label": "Tagline", "default": "MORE THAN MERCH. IT'S A LIFESTYLE." },
+        { "type": "text", "id": "hero_heading", "label": "Heading", "default": "ABOUT US" },
+        { "type": "textarea", "id": "hero_desc", "label": "Description", "default": "At Booyah! Merchant, we live and breathe Free Fire. We create premium-quality merchandise for true survivors who don't just play the game, they represent it." },
+        { "type": "text", "id": "hero_cta_text", "label": "CTA Button Text", "default": "OUR STORY" },
+        { "type": "url", "id": "hero_cta_link", "label": "CTA Button Link" },
+
+        { "type": "header", "content": "Mission Bar" },
+        { "type": "text", "id": "mission_title", "label": "Mission Title", "default": "OUR MISSION" },
+        { "type": "image_picker", "id": "mission_bg", "label": "Mission Background Image" },
+        { "type": "textarea", "id": "mission_desc", "label": "Mission Description", "default": "To deliver high-quality, stylish, and exclusive Free Fire merchandise that lets players express their passion, stand out, and feel like legends in real life." },
+        { "type": "text", "id": "mission_1_title", "label": "Mission 1 Title", "default": "BUILT FOR SURVIVORS" },
+        { "type": "text", "id": "mission_1_desc", "label": "Mission 1 Desc", "default": "Designed for players who never back down." },
+        { "type": "image_picker", "id": "mission_1_icon", "label": "Mission 1 Icon" },
+        { "type": "text", "id": "mission_2_title", "label": "Mission 2 Title", "default": "PREMIUM QUALITY" },
+        { "type": "text", "id": "mission_2_desc", "label": "Mission 2 Desc", "default": "Top-tier materials for ultimate comfort and durability." },
+        { "type": "image_picker", "id": "mission_2_icon", "label": "Mission 2 Icon" },
+        { "type": "text", "id": "mission_3_title", "label": "Mission 3 Title", "default": "EXCLUSIVE DESIGNS" },
+        { "type": "text", "id": "mission_3_desc", "label": "Mission 3 Desc", "default": "Unique styles you won't find anywhere else." },
+        { "type": "image_picker", "id": "mission_3_icon", "label": "Mission 3 Icon" },
+        { "type": "text", "id": "mission_4_title", "label": "Mission 4 Title", "default": "FOR THE COMMUNITY" },
+        { "type": "text", "id": "mission_4_desc", "label": "Mission 4 Desc", "default": "Made by players, for players." },
+        { "type": "image_picker", "id": "mission_4_icon", "label": "Mission 4 Icon" },
+
+        { "type": "header", "content": "Who We Are" },
+        { "type": "image_picker", "id": "who_image", "label": "Image" },
+        { "type": "text", "id": "who_heading", "label": "Heading", "default": "WHO WE ARE" },
+        { "type": "textarea", "id": "who_desc", "label": "Description", "default": "We are a team of passionate gamers and creators who understand the Free Fire universe inside out. Every product we craft is inspired by the game, built for quality, and inspired by the spirit of Booyah!" },
+        { "type": "text", "id": "stat_1_num", "label": "Stat 1 Number", "default": "5K+" },
+        { "type": "text", "id": "stat_1_label", "label": "Stat 1 Label", "default": "HAPPY CUSTOMERS" },
+        { "type": "text", "id": "stat_2_num", "label": "Stat 2 Number", "default": "200+" },
+        { "type": "text", "id": "stat_2_label", "label": "Stat 2 Label", "default": "EXCLUSIVE PRODUCTS" },
+        { "type": "text", "id": "stat_3_num", "label": "Stat 3 Number", "default": "50+" },
+        { "type": "text", "id": "stat_3_label", "label": "Stat 3 Label", "default": "COUNTRIES SHIP TO" },
+        { "type": "text", "id": "stat_4_num", "label": "Stat 4 Number", "default": "24/7" },
+        { "type": "text", "id": "stat_4_label", "label": "Stat 4 Label", "default": "SUPPORT" },
+        { "type": "text", "id": "who_cta_text", "label": "CTA Button Text", "default": "JOIN OUR JOURNEY" },
+        { "type": "url", "id": "who_cta_link", "label": "CTA Button Link" },
+
+        { "type": "header", "content": "Why Choose Section" },
+        { "type": "text", "id": "why_title", "label": "Section Title", "default": "WHY CHOOSE <span>BOOYAH!</span> MERCHANT?" },
+        { "type": "text", "id": "why_1_title", "label": "Card 1 Title", "default": "EXCLUSIVE MERCH" },
+        { "type": "text", "id": "why_1_desc", "label": "Card 1 Desc", "default": "Official-inspired designs you can't find anywhere else." },
+        { "type": "image_picker", "id": "why_1_icon", "label": "Card 1 Icon" },
+        { "type": "text", "id": "why_2_title", "label": "Card 2 Title", "default": "PREMIUM MATERIALS" },
+        { "type": "text", "id": "why_2_desc", "label": "Card 2 Desc", "default": "Comfortable, durable, and made to last." },
+        { "type": "image_picker", "id": "why_2_icon", "label": "Card 2 Icon" },
+        { "type": "text", "id": "why_3_title", "label": "Card 3 Title", "default": "LIMITED EDITIONS" },
+        { "type": "text", "id": "why_3_desc", "label": "Card 3 Desc", "default": "Rare drops and limited stock. Grab it before it's gone!" },
+        { "type": "image_picker", "id": "why_3_icon", "label": "Card 3 Icon" },
+        { "type": "text", "id": "why_4_title", "label": "Card 4 Title", "default": "WORLDWIDE SHIPPING" },
+        { "type": "text", "id": "why_4_desc", "label": "Card 4 Desc", "default": "We deliver to your location, no matter where you are." },
+        { "type": "image_picker", "id": "why_4_icon", "label": "Card 4 Icon" },
+        { "type": "text", "id": "why_5_title", "label": "Card 5 Title", "default": "DEDICATED SUPPORT" },
+        { "type": "text", "id": "why_5_desc", "label": "Card 5 Desc", "default": "Our squad is always ready to help you." },
+        { "type": "image_picker", "id": "why_5_icon", "label": "Card 5 Icon" },
+        { "type": "text", "id": "why_6_title", "label": "Card 6 Title", "default": "SECURE SHOPPING" },
+        { "type": "text", "id": "why_6_desc", "label": "Card 6 Desc", "default": "Safe & secure payments for a smooth shopping experience." },
+        { "type": "image_picker", "id": "why_6_icon", "label": "Card 6 Icon" },
+
+        { "type": "header", "content": "Banner Section" },
+        { "type": "image_picker", "id": "banner_bg", "label": "Banner Background" },
+        { "type": "image_picker", "id": "banner_char_left", "label": "Banner Character Left" },
+        { "type": "image_picker", "id": "banner_char_right", "label": "Banner Character Right" },
+        { "type": "text", "id": "banner_tag", "label": "Banner Tagline", "default": "WE DON'T JUST FOLLOW THE GAME." },
+        { "type": "text", "id": "banner_heading", "label": "Banner Heading", "default": "WE ARE THE GAME." },
+        { "type": "text", "id": "banner_accent", "label": "Banner Accent Text", "default": "BOOYAH!" },
+        { "type": "text", "id": "banner_cta_text", "label": "Banner CTA Text", "default": "SHOP LIMITED EDITIONS" },
+        { "type": "url", "id": "banner_cta_link", "label": "Banner CTA Link" },
+
+        { "type": "header", "content": "Bottom Feature Bar" },
+        { "type": "text", "id": "bottom_feat_1_title", "label": "Feature 1 Title", "default": "WORLDWIDE SHIPPING" },
+        { "type": "text", "id": "bottom_feat_1_desc", "label": "Feature 1 Desc", "default": "Fast & Reliable Delivery" },
+        { "type": "image_picker", "id": "bottom_feat_1_icon", "label": "Feature 1 Icon" },
+        { "type": "text", "id": "bottom_feat_2_title", "label": "Feature 2 Title", "default": "100% SECURE PAYMENT" },
+        { "type": "text", "id": "bottom_feat_2_desc", "label": "Feature 2 Desc", "default": "Safe Checkout Guaranteed" },
+        { "type": "image_picker", "id": "bottom_feat_2_icon", "label": "Feature 2 Icon" },
+        { "type": "text", "id": "bottom_feat_3_title", "label": "Feature 3 Title", "default": "EASY RETURNS" },
+        { "type": "text", "id": "bottom_feat_3_desc", "label": "Feature 3 Desc", "default": "30-Day Return Policy" },
+        { "type": "image_picker", "id": "bottom_feat_3_icon", "label": "Feature 3 Icon" },
+        { "type": "text", "id": "bottom_feat_4_title", "label": "Feature 4 Title", "default": "24/7 SUPPORT" },
+        { "type": "text", "id": "bottom_feat_4_desc", "label": "Feature 4 Desc", "default": "We're Here To Help" },
+        { "type": "image_picker", "id": "bottom_feat_4_icon", "label": "Feature 4 Icon" }
       ]
     },
     {
