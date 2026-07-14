@@ -1,5 +1,5 @@
 {%- comment -%}
-  NEXUS LOBBY — Premium Gaming Lobby Hero Section
+  NEXUS LOBBY â€” Premium Gaming Lobby Hero Section
   Each card is a block with full customization
 {%- endcomment -%}
 
@@ -59,9 +59,8 @@
 </style>
 {%- endif -%}
 
+<link rel="stylesheet" href="{{ 'nexus-hero.css' | asset_url }}">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
-
   :root {
     --nx-primary: {{ section.settings.primary_color | default: '#FFC72C' }};
     --nx-accent: {{ section.settings.accent_color | default: '#FF7A00' }};
@@ -85,1530 +84,6 @@
     --nx-green: #FFC72C;
   }
 
-  .nexus-lobby * { margin: 0; padding: 0; box-sizing: border-box; }
-  .nexus-lobby {
-    position: relative; width: 100%; height: 100vh;
-    overflow: hidden; background: var(--nx-bg-dark);
-    font-family: 'Inter', sans-serif; color: var(--nx-text-primary);
-  }
-
-  /* ======== LOADING ======== */
-  .nexus-loader {
-    position: fixed; inset: 0; display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    background: #050608; z-index: 10000; overflow: hidden;
-    transition: opacity 1s ease, visibility 1s;
-  }
-  .nexus-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-  .nexus-loader__bg {
-    position: absolute; inset: 0; background-size: cover; background-position: center; z-index: -1;
-  }
-  .nexus-loader__video {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;
-  }
-  .nexus-loader__content {
-    position: absolute; z-index: 2; text-align: center;
-    bottom: 40px; left: 50%; transform: translateX(-50%);
-    width: min(90vw, 600px);
-  }
-  .nexus-loader__title {
-    font-family: 'Orbitron', sans-serif; font-size: clamp(1.5rem, 3.5vw, 2.8rem);
-    font-weight: 900; letter-spacing: 8px; text-transform: uppercase;
-    color: #FFFFFF; margin-bottom: 0.5rem;
-    text-shadow: 0 0 30px rgba(255,199,44,0.5), 0 0 60px rgba(255,122,0,0.2);
-  }
-  .nexus-loader__subtitle {
-    font-size: clamp(0.7rem, 1.2vw, 0.9rem); color: #7D8798;
-    letter-spacing: 6px; text-transform: uppercase; margin-bottom: 1.5rem;
-  }
-  .nexus-loader__counter {
-    font-family: 'Orbitron', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 900; color: #FFFFFF; line-height: 1; margin-bottom: 1rem;
-    text-shadow: 0 0 40px rgba(255,199,44,0.6), 0 0 80px rgba(255,122,0,0.3);
-  }
-  .nexus-loader__bar-wrapper {
-    width: 100%; height: 3px; background: rgba(255,255,255,0.08);
-    border-radius: 2px; overflow: hidden; margin-bottom: 1rem;
-  }
-  .nexus-loader__bar {
-    height: 100%; width: 0%; border-radius: 2px; position: relative;
-    background: linear-gradient(90deg, #FFC72C, #FF7A00);
-    transition: width 0.1s linear;
-    box-shadow: 0 0 12px rgba(255,199,44,0.5), 0 0 24px rgba(255,122,0,0.25);
-  }
-  .nexus-loader__bar::after {
-    content: ''; position: absolute; top: 0; left: -60px; width: 60px; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-    animation: barStreak 1.5s ease-in-out infinite;
-  }
-  @keyframes barStreak { 0% { left: -60px; } 100% { left: 100%; } }
-  .nexus-loader__status {
-    font-size: 0.75rem; color: rgba(255,255,255,0.5);
-    letter-spacing: 4px; text-transform: uppercase; margin-bottom: 0.5rem;
-  }
-  .nexus-loader__japanese {
-    font-size: 1rem; color: var(--nx-gold); letter-spacing: 8px; opacity: 0.5;
-  }
-
-  /* ======== BACKGROUND ======== */
-  .nexus-bg-wrap {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden;
-    pointer-events: none;
-  }
-  .nexus-bg-wrap video {
-    position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%;
-    transform: translate(-50%, -50%); object-fit: cover;
-  }
-  .nexus-bg-wrap--image { background-size: cover; background-position: center; }
-  .nexus-bg-wrap::after {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center, transparent 0%, rgba(6,7,12,0.25) 75%);
-  }
-
-  /* ======== PARTICLES ======== */
-  .nexus-particles-canvas {
-    position: absolute; inset: 0; width: 100%; height: 100%; z-index: 7; pointer-events: none;
-  }
-  .nexus-dust {
-    position: absolute; inset: 0; z-index: 6; pointer-events: none; overflow: hidden;
-  }
-  .nexus-dust__particle {
-    position: absolute; width: 2px; height: 2px;
-    background: rgba(255,199,44,0.4); border-radius: 50%;
-    animation: dustFloat linear infinite;
-  }
-  @keyframes dustFloat {
-    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
-    10% { opacity: 0.6; }
-    90% { opacity: 0.3; }
-    100% { transform: translateY(-20vh) translateX(40px); opacity: 0; }
-  }
-
-  /* ======== NAVIGATION ======== */
-  .nexus-nav {
-    position: fixed; top: 0; left: 0; width: 100%; padding: 20px 4%;
-    display: flex; justify-content: space-between; align-items: center;
-    z-index: 1000; color: #fff;
-    background: transparent;
-    transition: background 0.35s ease, backdrop-filter 0.35s ease, box-shadow 0.35s ease, padding 0.35s ease;
-  }
-  .nexus-nav.scrolled {
-    background: rgba(5, 6, 8, 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
-    padding: 14px 4%;
-  }
-  .nexus-nav__left { display: flex; align-items: center; gap: 20px; }
-  .nexus-nav__brand {
-    display: flex; align-items: center; gap: 12px;
-    text-decoration: none; color: #fff;
-  }
-  .nexus-nav__logo {
-    width: var(--nx-logo-size, 36px); height: auto;
-    background: var(--nx-purple); border-radius: 50%;
-    display: flex; justify-content: center; align-items: center;
-    box-shadow: 0 0 15px var(--nx-purple);
-    overflow: hidden; flex-shrink: 0;
-  }
-  .nexus-nav__logo svg { width: 18px; height: 18px; fill: #fff; }
-  .nexus-nav__logo img {
-    width: 100%; height: 100%; object-fit: contain;
-    border-radius: inherit;
-  }
-  .nexus-nav__logo--full {
-    border-radius: var(--nx-logo-radius, 8px);
-    background: transparent; box-shadow: none;
-  }
-  .nexus-nav__brand-text {
-    font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 900;
-    letter-spacing: 2px; line-height: 1.1;
-  }
-  .nexus-nav__right { display: flex; gap: 16px; align-items: center; }
-  .nexus-nav__currency {
-    display: flex; align-items: center; gap: 6px;
-    font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 700;
-    color: var(--nx-blue);
-  }
-  .nexus-nav__currency svg { width: 16px; height: 16px; fill: var(--nx-blue); }
-  .nexus-nav__icon {
-    position: relative; color: #fff; text-decoration: none; padding: 8px;
-    background: none; border: none; transition: transform 0.3s; cursor: pointer;
-  }
-  .nexus-nav__icon:hover { transform: scale(1.1); }
-  .nexus-nav__icon svg { width: 20px; height: 20px; fill: currentColor; }
-  .nexus-nav__badge {
-    position: absolute; top: -6px; right: -8px; background: var(--nx-purple); color: #fff;
-    font-size: 0.65rem; font-weight: bold; width: 16px; height: 16px;
-    display: flex; justify-content: center; align-items: center;
-    border-radius: 50%; box-shadow: 0 0 8px var(--nx-purple);
-  }
-
-  /* ======== BACK BUTTON ======== */
-  .nexus-nav__back {
-    display: none; visibility: hidden; width: 0; height: 0; overflow: hidden;
-    align-items: center; gap: 8px; color: #fff; text-decoration: none;
-    font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-    padding: 8px 16px; border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(10,6,20,0.8); backdrop-filter: blur(10px);
-    cursor: pointer; transition: all 0.3s; border-radius: 6px;
-    opacity: 0; pointer-events: none; position: absolute; left: -9999px;
-  }
-  .nexus-nav__back:hover { border-color: var(--nx-primary); box-shadow: 0 0 15px rgba(255,122,0,0.4); }
-  .nexus-nav__back svg { width: 14px; height: 14px; fill: currentColor; }
-  .nexus-lobby.view-active .nexus-nav__back {
-    display: flex; visibility: visible; width: auto; height: auto;
-    overflow: visible; opacity: 1; pointer-events: auto;
-    position: relative; left: auto;
-  }
-
-  /* ======== VIEWS ======== */
-  .nexus-view {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-    opacity: 0; visibility: hidden;
-    transition: opacity 0.5s ease, visibility 0.5s;
-    overflow-y: auto; overflow-x: hidden;
-    z-index: 100; background: var(--nx-bg-dark);
-    padding-top: 80px;
-  }
-  .nexus-view.active { opacity: 1; visibility: visible; }
-  .nexus-view::-webkit-scrollbar { width: 4px; }
-  .nexus-view::-webkit-scrollbar-track { background: transparent; }
-  .nexus-view::-webkit-scrollbar-thumb { background: #ff7a00; border-radius: 2px; }
-
-  /* ======== LOBBY CHARACTER ======== */
-  .nexus-lobby__character {
-    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-    height: 100vh; max-height: 850px; z-index: 12; pointer-events: none;
-    animation: characterBreath 4s ease-in-out infinite; overflow: hidden;
-  }
-  .nexus-lobby__character img {
-    height: 100%; width: auto; object-fit: contain;
-  }
-  @keyframes characterBreath {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(-4px); }
-  }
-  .nexus-lobby__aura {
-    position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%);
-    width: min(800px, 90vw); height: min(800px, 90vw);
-    background: radial-gradient(circle, rgba(255,122,0,0.12) 0%, rgba(255,199,44,0.04) 30%, transparent 60%);
-    border-radius: 50%; z-index: 11; animation: pulseAura 4s infinite alternate ease-in-out;
-    pointer-events: none;
-  }
-  @keyframes pulseAura {
-    0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.4; }
-    100% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.8; }
-  }
-
-  /* ======== LOBBY CARDS ======== */
-  .nexus-lobby__card-strip { display: contents; }
-  .nexus-lobby__left, .nexus-lobby__right {
-    position: absolute; top: 50%; transform: translateY(-50%); z-index: 20;
-    display: flex; flex-direction: column; gap: 20px;
-  }
-  .nexus-lobby__left { left: 3%; width: 25%; }
-  .nexus-lobby__right { right: 3%; width: 25%; }
-
-  .nexus-lobby-card {
-    position: relative; display: flex; align-items: center; overflow: hidden;
-    border-radius: 14px; cursor: pointer; height: 170px;
-    border: 1px solid var(--card-color, rgba(255,255,255,0.12));
-    background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
-    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-  }
-  .nexus-lobby-card:hover {
-    transform: scale(1.03);
-    border-color: var(--card-color, var(--nx-gold));
-    box-shadow: 0 0 25px color-mix(in srgb, var(--card-color) 40%, transparent);
-  }
-  @media (max-width: 768px) {
-    .nexus-lobby-card:hover { transform: none; }
-    .nexus-lobby-card:active { transform: scale(0.97); }
-  }
-  .nexus-lobby-card__glass {
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.05) 100%);
-    z-index: 0;
-  }
-  .nexus-lobby-card__img {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-    filter: drop-shadow(4px 4px 12px rgba(0,0,0,0.8));
-  }
-  .nexus-lobby-card__content { position: relative; z-index: 2; padding: 16px 20px; }
-  .nexus-lobby-card__badge {
-    display: inline-block; padding: 3px 10px; border-radius: 4px;
-    font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .nexus-lobby-card__title {
-    font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 800;
-    letter-spacing: 3px; text-transform: uppercase; color: #fff; margin-bottom: 10px;
-  }
-  .nexus-lobby-card__subtitle {
-    font-size: 0.75rem; color: rgba(255,255,255,0.6); letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .nexus-scanline {
-    position: absolute; width: 100%; height: 2px; z-index: 3; pointer-events: none;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 4px);
-    opacity: 0.03;
-  }
-
-  /* ======== CTA ======== */
-  .nexus-lobby__cta {
-    position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
-    z-index: 20; text-align: center;
-  }
-  .nexus-lobby__tagline {
-    font-family: 'Orbitron', sans-serif; font-size: clamp(1rem, 2.5vw, 1.8rem);
-    font-weight: 900; letter-spacing: 4px; text-transform: uppercase;
-    color: #fff; margin-bottom: 6px;
-  }
-  .nexus-lobby__tagline span { color: var(--nx-gold); }
-  .nexus-lobby__tagline-sub {
-    font-size: 0.8rem; color: var(--nx-text-muted);
-    letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px;
-  }
-  .nexus-lobby__cta-btn {
-    position: relative; display: inline-flex; align-items: center; gap: 10px;
-    padding: 14px 32px; min-width: 200px; height: 48px;
-    background: linear-gradient(135deg, #FFE66D 0%, #FFC72C 40%, #FF9A00 100%);
-    border: 1px solid rgba(255,255,255,0.35); border-radius: 999px;
-    font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase; color: #FFFFFF;
-    cursor: pointer; text-decoration: none; overflow: hidden;
-    box-shadow: 0 12px 35px rgba(255,199,44,0.35), 0 0 40px rgba(255,199,44,0.45);
-    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s;
-  }
-  .nexus-lobby__cta-btn:hover {
-    transform: translateY(-4px) scale(1.04);
-    box-shadow: 0 16px 45px rgba(255,122,0,0.5), 0 0 60px rgba(255,199,44,0.6);
-    border-color: rgba(255,255,255,0.5);
-  }
-  .nexus-lobby__cta-btn::after {
-    content: ''; position: absolute; top: 0; left: -100%; width: 60px; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    animation: ctaShine 4s ease-in-out infinite;
-  }
-  @keyframes ctaShine { 0%, 80%, 100% { left: -100%; } 40% { left: 150%; } }
-  .nexus-lobby__cta-btn svg { width: 16px; height: 16px; fill: #fff; transition: transform 0.3s; }
-  .nexus-lobby__cta-btn:hover svg { transform: translateX(4px); }
-  .nexus-lobby__cta::before {
-    content: ''; position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px; height: 100px;
-    background: radial-gradient(ellipse, rgba(255,199,44,0.2) 0%, transparent 70%);
-    border-radius: 50%; animation: ctaGlowPulse 3s ease-in-out infinite alternate;
-    pointer-events: none; z-index: -1;
-  }
-  @keyframes ctaGlowPulse {
-    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
-    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-  }
-
-  /* ======== BOTTOM BAR ======== */
-  .nexus-lobby__bottom {
-    position: absolute; bottom: 0; left: 0; width: 100%;
-    padding: 14px 4%; display: flex; justify-content: space-between; align-items: center;
-    z-index: 20;
-    background: linear-gradient(to top, rgba(5,6,8,0.95) 0%, rgba(5,6,8,0.6) 60%, transparent 100%);
-  }
-  .nexus-lobby__bottom-left, .nexus-lobby__bottom-right {
-    display: flex; align-items: center; gap: 16px;
-  }
-  .nexus-lobby__bottom-btn {
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 6px; padding: 6px 12px; color: #fff; font-size: 0.7rem;
-    font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-    cursor: pointer; transition: all 0.3s; text-decoration: none;
-  }
-  .nexus-lobby__bottom-btn:hover {
-    border-color: var(--nx-primary); background: rgba(255,122,0,0.1);
-  }
-  .nexus-lobby__bottom-btn svg { width: 14px; height: 14px; fill: currentColor; }
-  .nexus-lobby__social { display: flex; align-items: center; gap: 10px; }
-  .nexus-lobby__social-label {
-    font-size: 0.65rem; color: var(--nx-text-muted);
-    letter-spacing: 3px; text-transform: uppercase;
-  }
-  .nexus-lobby__social-icon {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-    display: flex; justify-content: center; align-items: center;
-    color: #fff; transition: all 0.3s; cursor: pointer; text-decoration: none;
-  }
-  .nexus-lobby__social-icon:hover {
-    border-color: var(--nx-primary); color: #fff; transform: scale(1.1);
-    background: rgba(255,122,0,0.1);
-  }
-  .nexus-lobby__social-icon svg { width: 14px; height: 14px; fill: currentColor; }
-
-  /* ======== CONTENT VIEWS ======== */
-  .nexus-content-view {
-    position: relative; width: 100%; padding: 40px 4% 60px;
-    min-height: calc(100vh - 80px);
-  }
-  .nexus-content-view__bg {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-size: cover; background-position: center;
-    background-repeat: no-repeat;
-    background-color: #0C0A06;
-    z-index: 0;
-  }
-  .nexus-content-view__bg::after {
-    content: ''; position: absolute; inset: 0;
-    background: rgba(5,6,8,0.45);
-  }
-  .nexus-content-view > *:not(.nexus-content-view__bg) { position: relative; z-index: 1; }
-  
-  .nexus-content-view__title {
-    font-family: 'Orbitron', sans-serif; font-size: clamp(1.5rem, 3vw, 2.2rem);
-    font-weight: 900; letter-spacing: 4px; text-transform: uppercase;
-    margin-bottom: 6px; color: #FFC72C;
-  }
-  .nexus-content-view__subtitle {
-    font-size: 0.85rem; color: rgba(255,255,255,0.5);
-    letter-spacing: 3px; text-transform: uppercase;
-  }
-
-  /* Grid */
-  .nexus-content-view__grid {
-    display: grid; gap: 22px; max-width: 1500px; margin: 0 auto;
-    grid-template-columns: repeat(4, 1fr);
-    padding: 10px 0 40px;
-  }
-  @media (max-width: 1024px) {
-    .nexus-content-view__grid { grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 720px; }
-  }
-  @media (max-width: 640px) {
-    .nexus-content-view { padding: 24px 0 40px; }
-    .nexus-content-view__grid {
-      display: grid; grid-template-columns: 1fr; gap: 18px;
-      max-width: 400px; margin: 0 auto; padding: 0 4% 40px;
-    }
-  }
-  @keyframes npcFadeIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ======== PRODUCT CARD — Gaming Style ======== */
-  @property --ff-angle {
-    syntax: '<angle>';
-    inherits: false;
-    initial-value: 0deg;
-  }
-  @keyframes ffRotateBorder { to { --ff-angle: 360deg; } }
-  @keyframes ffFloatArt {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-  @keyframes ffShineSweep {
-    0% { left: -60%; }
-    35% { left: 130%; }
-    100% { left: 130%; }
-  }
-  @keyframes ffBtnShine {
-    0% { left: -40%; }
-    45% { left: 120%; }
-    100% { left: 120%; }
-  }
-  @keyframes ffBtnGradient {
-    0%,100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-  @keyframes ffBadgePulse {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
-  }
-  @keyframes ffPriceGlow {
-    0%,100% { text-shadow: 0 0 8px rgba(255,201,77,0.35); }
-    50% { text-shadow: 0 0 18px rgba(255,201,77,0.75), 0 0 30px rgba(255,91,26,0.3); }
-  }
-  @keyframes ffLiveBlink {
-    0%,100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-  @keyframes ffRipple {
-    to { transform: scale(3.5); opacity: 0; }
-  }
-
-  .nexus-product-card {
-    position: relative; width: 100%;
-    animation: npcFadeIn 0.5s ease-out both;
-  }
-  .nexus-product-card:nth-child(2) { animation-delay: 0.06s; }
-  .nexus-product-card:nth-child(3) { animation-delay: 0.12s; }
-  .nexus-product-card:nth-child(4) { animation-delay: 0.18s; }
-  .nexus-product-card:nth-child(5) { animation-delay: 0.24s; }
-  .nexus-product-card:nth-child(6) { animation-delay: 0.30s; }
-
-  .ff-card {
-    position: relative; width: 100%; border-radius: 18px; padding: 1px;
-    transform-style: preserve-3d;
-    transition: transform 0.3s cubic-bezier(0.22,0.9,0.32,1), box-shadow 0.3s ease;
-    will-change: transform;
-    background: linear-gradient(135deg, #2a2e38, transparent 40%, #2a2e38);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.4);
-  }
-  .ff-card::before {
-    content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
-    background: conic-gradient(from var(--ff-angle,0deg), #ff5b1a, #ffc94d, #ff8a2b, transparent 30%, #ff5b1a);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-    animation: ffRotateBorder 6s linear infinite; opacity: 0.7; z-index: 1; pointer-events: none;
-  }
-  .ff-card:hover::before { opacity: 1; }
-  .ff-card:hover {
-    box-shadow: 0 16px 40px rgba(255,91,26,0.2), 0 4px 12px rgba(0,0,0,0.4);
-  }
-
-  .ff-card-inner {
-    position: relative; border-radius: 17px;
-    background: linear-gradient(180deg, #1c1f27 0%, #15171d 60%, #101218 100%);
-    overflow: hidden; z-index: 2;
-  }
-
-  .ff-cursor-glow {
-    position: absolute; width: 260px; height: 260px; left: 0; top: 0;
-    background: radial-gradient(circle, rgba(255,138,43,0.2), transparent 65%);
-    transform: translate(-130px,-130px); pointer-events: none; opacity: 0;
-    transition: opacity 0.3s ease; z-index: 5; mix-blend-mode: screen;
-  }
-  .ff-card:hover .ff-cursor-glow { opacity: 1; }
-
-  .ff-hud { position: absolute; width: 18px; height: 18px; border-color: rgba(255,201,77,0.45); border-style: solid; z-index: 6; opacity: 0.7; pointer-events: none; transition: opacity 0.3s; }
-  .ff-card:hover .ff-hud { opacity: 1; border-color: rgba(255,201,77,0.65); }
-  .ff-hud.tl { top: 8px; left: 8px; border-width: 1.5px 0 0 1.5px; border-radius: 5px 0 0 0; }
-  .ff-hud.tr { top: 8px; right: 8px; border-width: 1.5px 1.5px 0 0; border-radius: 0 5px 0 0; }
-  .ff-hud.bl { bottom: 8px; left: 8px; border-width: 0 0 1.5px 1.5px; border-radius: 0 0 0 5px; }
-  .ff-hud.br { bottom: 8px; right: 8px; border-width: 0 1.5px 1.5px 0; border-radius: 0 0 5px 0; }
-
-  .ff-media {
-    position: relative; height: 200px;
-    display: flex; align-items: center; justify-content: center;
-    background: radial-gradient(circle at 50% 30%, rgba(255,91,26,0.18), transparent 60%), linear-gradient(180deg,#1a1d24,#101218);
-    overflow: hidden;
-  }
-  .ff-media::after {
-    content: ""; position: absolute; inset: 0;
-    background: repeating-linear-gradient(-45deg, rgba(255,255,255,0.015) 0 12px, transparent 12px 24px);
-    pointer-events: none;
-  }
-  .ff-media-shine {
-    position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
-    background: linear-gradient(115deg, transparent, rgba(255,255,255,0.15), transparent);
-    transform: skewX(-18deg); animation: ffShineSweep 4s ease-in-out infinite;
-    pointer-events: none; z-index: 3;
-  }
-  .ff-media-img {
-    width: 150px; height: 150px; position: relative;
-    animation: ffFloatArt 4s ease-in-out infinite;
-    filter: drop-shadow(0 10px 20px rgba(255,91,26,0.35));
-    z-index: 2; object-fit: contain;
-  }
-  .ff-card:hover .ff-media-img {
-    filter: drop-shadow(0 14px 28px rgba(255,91,26,0.5));
-    transform: scale(1.05);
-    animation-play-state: paused;
-  }
-
-  .ff-badge {
-    position: absolute; z-index: 7; font-weight: 700; letter-spacing: 0.5px;
-    font-size: 10px; padding: 5px 10px; border-radius: 16px; text-transform: uppercase;
-    line-height: 1;
-  }
-  .ff-badge-hot {
-    top: 12px; right: 12px; color: #1a0a02;
-    background: linear-gradient(135deg, #ffe08a, #ff5b1a);
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.2) inset, 0 4px 12px rgba(255,110,20,0.5);
-    animation: ffBadgePulse 2s ease-in-out infinite;
-  }
-  .ff-badge-level {
-    top: 12px; left: 12px; color: #ffe08a;
-    background: rgba(15,17,22,0.75); border: 1px solid rgba(255,201,77,0.4);
-    backdrop-filter: blur(4px); display: flex; align-items: center; gap: 4px;
-  }
-  .ff-badge-dot {
-    width: 5px; height: 5px; border-radius: 50%; background: #ffe08a;
-    box-shadow: 0 0 6px #ffe08a;
-  }
-
-  .ff-content { position: relative; padding: 14px 16px 16px; z-index: 2; }
-
-  .ff-title {
-    margin: 0 0 4px; font-family: 'Poppins', sans-serif; font-size: 15px;
-    font-weight: 700; color: #f4f1ea; letter-spacing: 0.2px; line-height: 1.3;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden; min-height: 39px;
-  }
-  .ff-title span {
-    background: linear-gradient(90deg, #ffe08a, #ff8a2b);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-
-  .ff-features {
-    list-style: none; margin: 0 0 10px; padding: 0;
-    display: flex; flex-direction: column; gap: 3px;
-  }
-  .ff-features li {
-    font-family: 'Poppins', sans-serif; font-size: 11px; color: #888e9a;
-    display: flex; align-items: center; gap: 6px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .ff-features li::before {
-    content: ""; width: 4px; height: 4px; border-radius: 50%;
-    background: #ff8a2b; box-shadow: 0 0 4px #ff8a2b; flex-shrink: 0;
-  }
-
-  .ff-price-row {
-    display: flex; align-items: center; gap: 8px; margin: 10px 0 12px;
-  }
-  .ff-price-old {
-    font-family: 'Orbitron', sans-serif; font-size: 12px; color: #5a5f6d;
-    text-decoration: line-through;
-  }
-  .ff-price-now {
-    font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900;
-    color: #ffe08a; animation: ffPriceGlow 2.4s ease-in-out infinite;
-    letter-spacing: 0.2px;
-  }
-  .ff-discount {
-    margin-left: auto; font-family: 'Orbitron', sans-serif; font-size: 10px;
-    font-weight: 800; color: #0d1b12;
-    background: linear-gradient(135deg,#7dffb0,#22c56b);
-    padding: 4px 8px; border-radius: 6px;
-    box-shadow: 0 3px 10px rgba(34,197,107,0.3);
-    line-height: 1;
-  }
-
-  .ff-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-  .ff-chip {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-family: 'Poppins', sans-serif; font-size: 10.5px; font-weight: 600;
-    color: #888e9a; background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07); padding: 5px 10px;
-    border-radius: 16px; cursor: default; transition: all 0.3s;
-  }
-  .ff-chip:hover {
-    color: #f4f1ea; border-color: rgba(255,138,43,0.5);
-    background: rgba(255,91,26,0.08); box-shadow: 0 0 12px rgba(255,110,20,0.25);
-    transform: translateY(-1px);
-  }
-
-  .ff-buy-btn {
-    position: relative; width: 100%; border: none; outline: none; cursor: pointer;
-    padding: 12px 16px; border-radius: 12px;
-    background: linear-gradient(135deg, #ff5b1a, #ff8a2b 55%, #ffc94d);
-    background-size: 180% 180%; color: #1a0c02;
-    font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 900;
-    letter-spacing: 0.5px; text-transform: uppercase;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    overflow: hidden; isolation: isolate;
-    box-shadow: 0 6px 16px rgba(255,91,26,0.3), 0 0 0 1px rgba(255,201,77,0.35) inset;
-    transition: transform 0.25s, box-shadow 0.25s;
-    animation: ffBtnGradient 4s ease-in-out infinite;
-  }
-  .ff-buy-btn::after {
-    content: ""; position: absolute; top: 0; left: -40%; width: 30%; height: 100%;
-    background: linear-gradient(115deg, transparent, rgba(255,255,255,0.5), transparent);
-    transform: skewX(-20deg); animation: ffBtnShine 3s ease-in-out infinite; z-index: 1;
-  }
-  .ff-buy-btn:hover {
-    transform: translateY(-2px) scale(1.015);
-    box-shadow: 0 10px 24px rgba(255,110,20,0.45), 0 0 0 1px rgba(255,224,138,0.5) inset;
-  }
-  .ff-buy-btn:active { transform: translateY(0) scale(0.99); }
-  .ff-buy-btn .ff-btn-label { z-index: 2; }
-  .ff-buy-btn .ff-btn-arrow { display: inline-flex; transition: transform 0.3s; z-index: 2; }
-  .ff-buy-btn:hover .ff-btn-arrow { transform: translateX(4px); }
-
-  .ff-footer-strip {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 10px; padding-top: 10px;
-    border-top: 1px solid rgba(255,255,255,0.04);
-    font-family: 'Poppins', sans-serif; font-size: 9.5px;
-    color: #5a5f6d; letter-spacing: 0.4px; text-transform: uppercase;
-  }
-  .ff-footer-live { display: flex; align-items: center; gap: 5px; }
-  .ff-live-dot {
-    width: 5px; height: 5px; border-radius: 50%; background: #2be07a;
-    box-shadow: 0 0 6px #2be07a; animation: ffLiveBlink 1.4s ease-in-out infinite;
-  }
-
-  .ff-ripple {
-    position: absolute; border-radius: 50%; background: rgba(255,255,255,0.5);
-    transform: scale(0); animation: ffRipple 0.6s ease-out forwards;
-    pointer-events: none; z-index: 0;
-  }
-
-  /* Wishlist heart */
-  .npc__wish {
-    position: absolute; top: 12px; right: 12px; z-index: 10;
-    width: 32px; height: 32px; border-radius: 50%;
-    background: rgba(15,17,22,0.7); border: 1px solid rgba(255,201,77,0.4);
-    backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.3s;
-  }
-  .npc__wish:hover { transform: scale(1.1); background: rgba(255,91,26,0.15); border-color: #ff5b1a; }
-  .npc__wish svg { width: 14px; height: 14px; fill: rgba(255,201,77,0.45); transition: fill 0.3s; }
-  .npc__wish:hover svg { fill: #ff5b1a; }
-  .npc__wish.active svg { fill: #ff5b1a; }
-
-  @media (max-width: 640px) {
-    .ff-media { height: 180px; }
-    .ff-media-img { width: 130px; height: 130px; }
-    .ff-price-now { font-size: 20px; }
-    .ff-title { font-size: 14px; min-height: 36px; }
-    .ff-buy-btn { font-size: 12px; padding: 10px 14px; }
-    .ff-content { padding: 12px 14px 14px; }
-  }
-
-  /* ======== PRODUCT MODAL ======== */
-  .nexus-modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    z-index: 10000; display: none; align-items: center; justify-content: center;
-    backdrop-filter: blur(6px);
-  }
-  .nexus-modal-overlay.open { display: flex; }
-  .nexus-modal {
-    position: relative; width: min(90vw, 820px); max-height: 85vh;
-    background: #fff; border-radius: 28px; overflow: hidden;
-    display: flex; box-shadow: 0 40px 100px rgba(0,0,0,0.35);
-    animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.88) translateY(30px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .nexus-modal__close {
-    position: absolute; top: 16px; right: 16px; z-index: 10;
-    width: 40px; height: 40px; border-radius: 50%; border: none;
-    background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s, transform 0.2s;
-  }
-  .nexus-modal__close:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
-  .nexus-modal__close svg { width: 18px; height: 18px; fill: #fff; }
-  .nexus-modal__left {
-    flex: 0 0 45%; background: linear-gradient(145deg, #FFC72C 0%, #FFB300 100%);
-    display: flex; align-items: center; justify-content: center;
-    padding: 40px; position: relative; overflow: hidden;
-  }
-  .nexus-modal__left::before {
-    content: ''; position: absolute; width: 240px; height: 240px;
-    border: 2.5px solid rgba(255,255,255,0.15); border-radius: 50%;
-    top: 8%; left: -12%;
-  }
-  .nexus-modal__left::after {
-    content: ''; position: absolute; width: 120px; height: 120px;
-    border: 2px solid rgba(255,255,255,0.1); border-radius: 50%;
-    bottom: 15%; right: 10%;
-  }
-  .nexus-modal__left img {
-    max-width: 100%; max-height: 340px; object-fit: contain;
-    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.25));
-    position: relative; z-index: 1;
-    animation: productFloat 4s ease-in-out infinite;
-  }
-  .nexus-modal__right {
-    flex: 1; padding: 44px 36px; display: flex; flex-direction: column;
-    justify-content: center; overflow-y: auto;
-  }
-  .nexus-modal__title {
-    font-family: 'Poppins', 'Montserrat', sans-serif;
-    font-size: 1.5rem; font-weight: 800;
-    color: #1a1a2e; margin-bottom: 8px; letter-spacing: 0.5px;
-  }
-  .nexus-modal__price {
-    font-family: 'Poppins', 'Montserrat', sans-serif;
-    font-size: 2rem; font-weight: 800;
-    color: #FF5A00; margin-bottom: 18px;
-  }
-  .nexus-modal__desc {
-    font-family: 'Poppins', 'Montserrat', sans-serif;
-    font-size: 0.88rem; color: #777; line-height: 1.7; margin-bottom: 28px;
-  }
-  .nexus-modal__qty-row {
-    display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
-  }
-  .nexus-modal__qty-label {
-    font-family: 'Poppins', 'Montserrat', sans-serif;
-    font-size: 0.75rem; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: #999;
-  }
-  .nexus-modal__qty {
-    display: flex; align-items: center; border: 2px solid #eee;
-    border-radius: 10px; overflow: hidden;
-  }
-  .nexus-modal__qty-btn {
-    width: 38px; height: 38px; border: none; background: #f8f8f8;
-    font-size: 1.1rem; font-weight: 700; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s; color: #333;
-  }
-  .nexus-modal__qty-btn:hover { background: #eee; }
-  .nexus-modal__qty-val {
-    width: 48px; text-align: center; font-size: 1rem; font-weight: 700;
-    border: none; background: #fff; color: #1a1a2e;
-    font-family: 'Poppins', 'Montserrat', sans-serif;
-  }
-  .nexus-modal__add-btn {
-    width: 100%; padding: 15px; border: none; border-radius: 50px;
-    background: #1a1a1a; color: #FF5A00;
-    font-family: 'Poppins', 'Montserrat', sans-serif;
-    font-size: 0.82rem; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; cursor: pointer;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.3s, background 0.3s, color 0.3s;
-  }
-  .nexus-modal__add-btn:hover {
-    transform: scale(1.03); background: #FF5A00; color: #fff;
-    box-shadow: 0 8px 30px rgba(255,90,0,0.4);
-  }
-  @media (max-width: 640px) {
-    .nexus-modal { flex-direction: column; max-height: 90vh; border-radius: 20px; }
-    .nexus-modal__left { flex: none; height: 240px; }
-    .nexus-modal__right { padding: 28px 22px; }
-    .nexus-modal__title { font-size: 1.2rem; }
-    .nexus-modal__price { font-size: 1.6rem; }
-  }
-  .nexus-story-view, .nexus-about-view {
-    max-width: 800px; margin: 0 auto; padding: 40px 4% 60px; text-align: center;
-  }
-  .nexus-story-view h2, .nexus-about-view h2 {
-    font-family: 'Orbitron', sans-serif; font-size: clamp(1.5rem, 3vw, 2.5rem);
-    font-weight: 900; letter-spacing: 4px; text-transform: uppercase;
-    margin-bottom: 24px; color: var(--nx-gold);
-  }
-  .nexus-story-view p, .nexus-about-view p {
-    font-size: 1rem; line-height: 1.8; color: var(--nx-text-secondary);
-    margin-bottom: 16px;
-  }
-
-  /* ======== CART SIDEBAR ======== */
-  .nexus-cart-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-    z-index: 9999; opacity: 0; visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
-    backdrop-filter: blur(4px);
-  }
-  .nexus-cart-overlay.open { opacity: 1; visibility: visible; }
-  .nexus-cart-sidebar {
-    position: fixed; top: 0; right: -470px; width: 450px; height: 100vh;
-    background: #F8F6F2; border-left: 1px solid rgba(255,199,44,0.15);
-    z-index: 10000; display: flex; flex-direction: column;
-    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: -10px 0 40px rgba(0,0,0,0.15);
-  }
-  .nexus-cart-sidebar.open { right: 0; }
-  .nexus-cart-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 20px 24px; border-bottom: 1px solid rgba(0,0,0,0.08);
-    background: #fff;
-  }
-  .nexus-cart-header h3 {
-    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
-    font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-    color: #FF7A00;
-  }
-  .nexus-cart-close {
-    background: #F0F0F0; border: none; color: #333; cursor: pointer;
-    width: 32px; height: 32px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-  }
-  .nexus-cart-close:hover { background: #FF7A00; color: #fff; }
-  .nexus-cart-close svg { fill: currentColor; width: 16px; height: 16px; }
-  .nexus-cart-items {
-    flex: 1; overflow-y: auto; padding: 16px 20px;
-  }
-  .nexus-cart-items::-webkit-scrollbar { width: 4px; }
-  .nexus-cart-items::-webkit-scrollbar-thumb { background: #FFC72C; border-radius: 2px; }
-  .nexus-cart-item {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.06);
-  }
-  .nexus-cart-item img {
-    width: 70px; height: 70px; border-radius: 10px; object-fit: cover;
-    border: 2px solid rgba(255,199,44,0.2);
-  }
-  .nexus-cart-item-info {
-    flex: 1; min-width: 0;
-  }
-  .nexus-cart-item-title {
-    font-family: 'Poppins', sans-serif; font-size: 1.35rem; font-weight: 600;
-    color: #1a1a1a; margin: 0 0 4px 0;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .nexus-cart-item-price {
-    font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700;
-    color: #FF7A00; margin: 0;
-  }
-  .nexus-cart-item-qty {
-    display: flex; align-items: center; gap: 8px; margin-top: 8px;
-  }
-  .nexus-cart-item-qty-btn {
-    width: 24px; height: 24px; border-radius: 6px; border: 1px solid #ddd;
-    background: #fff; color: #333; font-size: 0.8rem; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-  }
-  .nexus-cart-item-qty-btn:hover {
-    border-color: #FF7A00; color: #FF7A00;
-  }
-  .nexus-cart-item-qty-val {
-    font-family: 'Poppins', sans-serif; font-size: 0.85rem; font-weight: 600;
-    color: #1a1a1a; min-width: 20px; text-align: center;
-  }
-  .nexus-cart-item-remove {
-    background: none; border: none; cursor: pointer; padding: 4px;
-    color: #ccc; transition: color 0.2s;
-  }
-  .nexus-cart-item-remove:hover { color: #FF3D57; }
-  .nexus-cart-item-remove svg { width: 16px; height: 16px; fill: currentColor; }
-  .nexus-cart-footer {
-    padding: 20px 24px; border-top: 1px solid rgba(0,0,0,0.08);
-    background: #fff;
-  }
-  .nexus-cart-total {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 16px; font-family: 'Orbitron', sans-serif;
-    font-size: 1.6rem; font-weight: 700; letter-spacing: 2px;
-    color: #1a1a1a;
-  }
-  .nexus-cart-total span:last-child { color: #FF7A00; font-size: 1.6rem; }
-  .nexus-cart-checkout {
-    display: block; width: 100%; padding: 14px; border: none; border-radius: 12px;
-    background: linear-gradient(135deg, #FF7A00, #FFC72C);
-    font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase; color: #fff;
-    text-decoration: none; text-align: center; cursor: pointer;
-    box-shadow: 0 4px 16px rgba(255,122,0,0.3);
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  .nexus-cart-checkout:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(255,122,0,0.4);
-  }
-  @media (max-width: 480px) {
-    .nexus-cart-sidebar { width: 100%; right: -100%; }
-  }
-
-  /* ======== STOREFRONT PRODUCT BLOCK (fn-card-frame style) ======== */
-  .nx-sf-heroes, .nx-sf-container, .nx-sf-sparks, .nx-sf-glowline { position: relative; z-index: 1; }
-  .nx-sf-hero { position: relative; width: 100%; height: 360px; background: linear-gradient(135deg, #111, #0a0a0b); display: flex; align-items: center; padding: 0 5%; border-radius: 16px; border: 1px solid var(--nx-glass-border); overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-  .nx-sf-hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,0.92), rgba(0,0,0,0.45) 50%, transparent); z-index: 1; }
-  .nx-sf-hero-shine { position: absolute; top: 0; left: -60%; width: 35%; height: 100%; background: linear-gradient(115deg, transparent, rgba(255,255,255,0.06), transparent); transform: skewX(-20deg); z-index: 2; }
-  .nx-sf-hero-content { position: relative; z-index: 3; max-width: 600px; }
-  .nx-sf-badge { border: 1px solid var(--nx-gold); color: var(--nx-gold); padding: 4px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 15px; border-radius: 4px; box-shadow: 0 0 12px rgba(255,176,0,0.2); }
-  .nx-sf-hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(1.5rem, 4vw, 3rem); line-height: 1; margin: 0 0 12px 0; text-transform: uppercase; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
-  .nx-sf-hero h1 span { color: var(--nx-gold); }
-  .nx-sf-hero p { color: #ccc; font-size: 16px; line-height: 1.5; margin: 0; }
-
-  .nx-sf-container { max-width: 1600px; margin: 0 auto; padding: 30px 20px; display: flex; gap: 30px; }
-  .nx-sf-sidebar { width: 280px; flex-shrink: 0; }
-  .nx-sf-main { flex-grow: 1; width: 100%; }
-
-  .nx-sf-toolbar { background: var(--nx-bg-card); border: 1px solid var(--nx-glass-border); border-radius: 10px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .nx-sf-count { color: #aaa; font-size: 14px; text-transform: uppercase; font-weight: 600; }
-  .nx-sf-sort { background: transparent; color: #fff; border: none; outline: none; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; }
-  .nx-sf-sort option { background: var(--nx-bg-card); }
-
-  .nx-sf-filter-widget { background: var(--nx-bg-card); border: 1px solid var(--nx-glass-border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-  .nx-sf-filter-title { font-size: 14px; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid var(--nx-glass-border); }
-  .nx-sf-filter-list { list-style: none; padding: 0; margin: 0; }
-  .nx-sf-filter-list li { margin-bottom: 12px; }
-  .nx-sf-filter-label { display: flex; justify-content: space-between; cursor: pointer; color: #bbb; font-size: 14px; }
-  .nx-sf-fc { display: none; }
-  .nx-sf-color-swatches { display: flex; flex-wrap: wrap; gap: 10px; }
-  .nx-sf-color-box { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #333; cursor: pointer; }
-  .nx-sf-color-box:hover { transform: scale(1.12); }
-  .nx-sf-fc:checked + .nx-sf-color-box { border-color: var(--nx-gold); box-shadow: 0 0 10px var(--nx-gold); }
-  .nx-sf-size-swatches { display: flex; flex-wrap: wrap; gap: 10px; }
-  .nx-sf-size-box { border: 1px solid #444; padding: 5px 12px; color: #ccc; cursor: pointer; border-radius: 4px; font-weight: 600; }
-  .nx-sf-size-box:hover { border-color: var(--nx-gold); color: var(--nx-gold); }
-  .nx-sf-fc:checked + .nx-sf-size-box { border-color: var(--nx-gold); color: var(--nx-gold); background: rgba(255,176,0,0.08); }
-
-  .nx-sf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
-
-  .nx-sf-card { --cut: 18px; clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); background: var(--nx-glass-border); padding: 1px; cursor: pointer; transition: background 0.35s ease, transform 0.35s ease; position: relative; }
-  .nx-sf-card:hover { background: linear-gradient(135deg, var(--nx-gold), rgba(255,176,0,0.15)); transform: translateY(-6px); }
-  .nx-sf-card-inner { clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); background: var(--nx-bg-elevated); padding: 14px; height: 100%; display: flex; flex-direction: column; }
-  .nx-sf-card-id { position: absolute; top: 10px; right: 14px; font-size: 10px; color: #555; letter-spacing: 1px; font-weight: 700; z-index: 2; }
-  .nx-sf-badge-tag { position: absolute; top: 12px; left: 0; font-size: 10px; font-weight: bold; padding: 4px 14px 4px 10px; z-index: 3; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, 82% 100%, 0% 100%); }
-  .nx-sf-bg-purple { background: #8000FF; color: white; }
-  .nx-sf-bg-red { background: #FF3333; color: white; }
-  .nx-sf-bg-orange { background: #FF6600; color: white; }
-  .nx-sf-bg-blue { background: #0055FF; color: white; }
-
-  .nx-sf-card-img-wrap { width: 100%; aspect-ratio: 1/1; margin-bottom: 14px; overflow: hidden; position: relative; background: linear-gradient(135deg, #1c1c1f, #0c0c0d); }
-  .nx-sf-card-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease, filter 0.5s ease; }
-  .nx-sf-card:hover .nx-sf-card-img { transform: scale(1.06); filter: brightness(0.8) saturate(1.1); }
-  .nx-sf-no-image { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1c1c1f, #0c0c0d); }
-  .nx-sf-no-image span { color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-  .nx-sf-corner { position: absolute; width: 16px; height: 16px; border-color: rgba(255,255,255,0.18); transition: border-color 0.35s ease; z-index: 2; }
-  .nx-sf-corner-tl { top: 6px; left: 6px; border-top: 2px solid; border-left: 2px solid; }
-  .nx-sf-corner-br { bottom: 6px; right: 6px; border-bottom: 2px solid; border-right: 2px solid; }
-  .nx-sf-card:hover .nx-sf-corner { border-color: var(--nx-gold); }
-  .nx-sf-scanline { position: absolute; left: 0; top: -10%; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--nx-gold), transparent); opacity: 0; z-index: 2; }
-  .nx-sf-card:hover .nx-sf-scanline { animation: fnScan 1.4s linear infinite; }
-
-  .nx-sf-card-title { font-size: 16px; color: #fff; margin: 0 0 6px 0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-  .nx-sf-card-stars { color: var(--nx-gold); font-size: 12px; margin-bottom: 10px; }
-  .nx-sf-card-stars span { color: #666; }
-  .nx-sf-card-divider { height: 1px; width: 30%; background: var(--nx-glass-border); margin-bottom: 12px; position: relative; overflow: hidden; }
-  .nx-sf-card-divider::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--nx-gold); transition: width 0.45s ease; }
-  .nx-sf-card:hover .nx-sf-card-divider::after { width: 100%; }
-
-  .nx-sf-card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-  .nx-sf-price-wrap { display: flex; align-items: center; gap: 8px; }
-  .nx-sf-price { font-size: 20px; font-weight: bold; color: #fff; }
-  .nx-sf-compare { font-size: 14px; color: #666; text-decoration: line-through; }
-  .nx-sf-cart-btn { width: 42px; height: 42px; border: none; background: rgba(255,176,0,0.08); clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); color: var(--nx-gold); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 5; }
-  .nx-sf-cart-btn:hover { background: var(--nx-gold); color: #111; transform: scale(1.08); }
-  .nx-sf-cart-btn svg { width: 17px; fill: currentColor; }
-  .nx-sf-spinner { animation: spin 1s linear infinite; }
-
-  /* Quick View Modal */
-  .nx-sf-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(8px); z-index: 10001; display: flex; justify-content: center; align-items: center; padding: 20px; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
-  .nx-sf-modal-overlay.active { opacity: 1; visibility: visible; }
-  .nx-sf-modal-frame { --mcut: 26px; position: relative; width: 960px; max-width: 100%; clip-path: polygon(var(--mcut) 0, 100% 0, 100% calc(100% - var(--mcut)), calc(100% - var(--mcut)) 100%, 0 100%, 0 var(--mcut)); background: linear-gradient(135deg, var(--nx-gold), rgba(255,255,255,0.06) 45%, var(--nx-gold) 100%); padding: 1.5px; transform: scale(0.94) translateY(10px); opacity: 0; transition: transform 0.35s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease; }
-  .nx-sf-modal-overlay.active .nx-sf-modal-frame { transform: scale(1) translateY(0); opacity: 1; }
-  .nx-sf-modal-box { clip-path: polygon(var(--mcut) 0, 100% 0, 100% calc(100% - var(--mcut)), calc(100% - var(--mcut)) 100%, 0 100%, 0 var(--mcut)); background: #111113; display: flex; max-height: 88vh; overflow: hidden; }
-  .nx-sf-modal-close { position: absolute; top: 16px; right: 16px; width: 38px; height: 38px; background: rgba(255,255,255,0.06); clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); border: none; color: #fff; font-size: 15px; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transition: all 0.28s; }
-  .nx-sf-modal-close:hover { background: var(--nx-gold); color: #111; transform: scale(1.08); }
-  .nx-sf-modal-media { width: 46%; background: #0a0a0b; display: flex; flex-direction: column; gap: 12px; padding: 22px; border-right: 1px solid rgba(255,255,255,0.06); }
-  .nx-sf-modal-media-frame { position: relative; flex: 1; min-height: 260px; overflow: hidden; border-radius: 4px; background: linear-gradient(135deg, #1c1c1f, #0c0c0d); }
-  .nx-sf-modal-media-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .nx-sf-modal-media-frame .nx-sf-corner { border-color: rgba(255,176,0,0.5); }
-  .nx-sf-stock-tag { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); border: 1px solid rgba(92,255,160,0.4); color: #5CFFA0; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 5px 10px; border-radius: 3px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; z-index: 5; }
-  .nx-sf-stock-dot { width: 6px; height: 6px; border-radius: 50%; background: #5CFFA0; box-shadow: 0 0 6px #5CFFA0; }
-  .nx-sf-modal-thumbs { display: flex; gap: 8px; overflow-x: auto; }
-  .nx-sf-modal-thumb { width: 54px; height: 54px; flex-shrink: 0; border: 1px solid var(--nx-glass-border); border-radius: 3px; overflow: hidden; cursor: pointer; opacity: 0.55; transition: all 0.28s; }
-  .nx-sf-modal-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .nx-sf-modal-thumb:hover { opacity: 0.9; }
-  .nx-sf-modal-thumb.active { border-color: var(--nx-gold); opacity: 1; box-shadow: 0 0 8px rgba(255,176,0,0.35); }
-  .nx-sf-modal-info { width: 54%; display: flex; flex-direction: column; padding: 30px 32px 22px; }
-  .nx-sf-modal-info-scroll { flex: 1; overflow-y: auto; padding-right: 8px; margin-bottom: 18px; }
-  .nx-sf-modal-tag { display: inline-block; font-size: 11px; letter-spacing: 2px; color: var(--nx-gold); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
-  .nx-sf-modal-title { font-family: 'Orbitron', sans-serif; font-size: 28px; text-transform: uppercase; margin: 0 0 8px 0; line-height: 1.08; }
-  .nx-sf-modal-stars { color: var(--nx-gold); font-size: 13px; margin-bottom: 14px; }
-  .nx-sf-modal-stars span { color: #666; }
-  .nx-sf-modal-price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  .nx-sf-modal-price { font-size: 25px; font-weight: 800; color: #fff; }
-  .nx-sf-modal-compare { font-size: 15px; color: #666; text-decoration: line-through; }
-  .nx-sf-modal-discount { font-size: 11px; font-weight: 700; background: rgba(255,51,51,0.15); color: #FF6B6B; padding: 3px 8px; border-radius: 3px; text-transform: uppercase; }
-  .nx-sf-modal-divider { height: 1px; background: linear-gradient(90deg, var(--nx-glass-border), transparent); margin-bottom: 16px; }
-  .nx-sf-modal-desc { color: #9a9a9d; font-size: 14px; line-height: 1.7; margin-bottom: 18px; }
-  .nx-sf-modal-option-group { margin-bottom: 16px; }
-  .nx-sf-modal-option-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 8px; display: block; font-weight: 700; }
-  .nx-sf-modal-option-values { display: flex; flex-wrap: wrap; gap: 8px; }
-  .nx-sf-opt-btn { border: 1px solid #3a3a3d; background: transparent; color: #ccc; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 3px; transition: all 0.28s; }
-  .nx-sf-opt-btn:hover { border-color: var(--nx-gold); color: var(--nx-gold); }
-  .nx-sf-opt-color { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #333; cursor: pointer; transition: all 0.28s; }
-  .nx-sf-opt-color:hover { transform: scale(1.1); }
-  .nx-sf-modal-qty-row { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
-  .nx-sf-modal-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #888; font-weight: 700; }
-  .nx-sf-qty-stepper { display: flex; align-items: center; border: 1px solid #3a3a3d; border-radius: 4px; overflow: hidden; }
-  .nx-sf-qty-btn { width: 34px; height: 34px; background: transparent; border: none; color: #ccc; font-size: 16px; cursor: pointer; }
-  .nx-sf-qty-btn:hover { background: var(--nx-gold); color: #111; }
-  .nx-sf-qty-stepper input { width: 44px; height: 34px; background: #1a1a1c; border: none; border-left: 1px solid #3a3a3d; border-right: 1px solid #3a3a3d; color: #fff; text-align: center; font-weight: 700; }
-  .nx-sf-modal-add { background: var(--nx-gold); color: #111; border: none; padding: 16px; font-size: 15px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); }
-  .nx-sf-modal-add:hover:not(:disabled) { box-shadow: 0 0 20px rgba(255,176,0,0.4); }
-  .nx-sf-modal-add:disabled { background: #3a3a3d; color: #777; cursor: not-allowed; }
-  .nx-sf-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(50px); background: #111; border: 1px solid var(--nx-gold); color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: bold; opacity: 0; visibility: hidden; transition: all 0.28s; z-index: 10002; }
-  .nx-sf-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
-  .nx-sf-sparks { position: absolute; bottom: 0; left: 0; width: 100%; height: 220px; overflow: hidden; pointer-events: none; z-index: 1; }
-  .nx-sf-spark { position: absolute; bottom: -10px; border-radius: 50%; background: radial-gradient(circle, #fff6c8 0%, var(--nx-gold) 45%, transparent 80%); box-shadow: 0 0 5px 1px rgba(255,140,0,0.4); opacity: 0; animation: fnSparkRise ease-in infinite; }
-  .nx-sf-glowline { position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #ff6a00, var(--nx-gold), #ff6a00, transparent); filter: blur(4px); z-index: 2; }
-  .nx-sf-mobile-filter { display: none; background: var(--nx-bg-card); border: 1px solid var(--nx-gold); color: white; padding: 10px 20px; border-radius: 6px; margin-bottom: 20px; cursor: pointer; width: 100%; }
-
-  @media (max-width: 1200px) { .nx-sf-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 990px) {
-    .nx-sf-container { flex-direction: column; }
-    .nx-sf-sidebar { display: none; }
-    .nx-sf-mobile-filter { display: block; }
-    .nx-sf-sidebar.open { display: block; position: fixed; top: 0; left: 0; width: 300px; height: 100%; background: #111; z-index: 999; padding: 20px; overflow-y: auto; border-right: 1px solid var(--nx-gold); }
-    .nx-sf-hero { height: 280px; }
-    .nx-sf-modal-box { flex-direction: column; overflow-y: auto; }
-    .nx-sf-modal-media, .nx-sf-modal-info { width: 100%; }
-    .nx-sf-modal-media { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .nx-sf-modal-frame { --mcut: 18px; }
-  }
-  @media (max-width: 768px) {
-    .nx-sf-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .nx-sf-card { --cut: 12px; }
-    .nx-sf-card-title { font-size: 14px; }
-    .nx-sf-price { font-size: 16px; }
-    .nx-sf-cart-btn { width: 34px; height: 34px; }
-  }
-
-  /* ======== RESPONSIVE — LAPTOP ======== */
-  @media (min-width: 1200px) and (max-width: 1600px) {
-    .nexus-lobby__left { left: 2%; width: 20%; }
-    .nexus-lobby__right { right: 2%; width: 20%; }
-    .nexus-lobby-card { height: 130px; }
-    .nexus-lobby-card__title { font-size: 0.75rem; letter-spacing: 2px; }
-    .nexus-lobby-card__subtitle { font-size: 0.6rem; }
-    .nexus-lobby-card__content { padding: 12px 16px; }
-  }
-  @media (max-width: 1199px) {
-    .nexus-lobby__left, .nexus-lobby__right { width: 26%; }
-    .nexus-lobby-card { height: 140px; }
-  }
-
-  /* ======== RESPONSIVE — TABLET ======== */
-  @media (max-width: 1024px) {
-    .nexus-lobby__left { left: 2%; width: 28%; }
-    .nexus-lobby__right { right: 2%; width: 28%; }
-    .nexus-lobby__character { height: 50vh; max-height: 550px; }
-    .nexus-lobby__bottom-btn span { display: none; }
-  }
-
-  /* ======== RESPONSIVE — MOBILE ======== */
-  @media (max-width: 768px) {
-    /* Nav */
-    .nexus-nav { padding: 14px 4%; }
-    .nexus-nav__left { gap: 12px; }
-    .nexus-nav__logo { width: var(--nx-logo-size-mb, 32px); }
-    .nexus-nav__logo svg { width: 16px; height: 16px; }
-    .nexus-nav__brand-text { font-size: 0.85rem; letter-spacing: 1.5px; }
-    .nexus-nav__right { gap: 10px; }
-    .nexus-nav__currency { font-size: 0.7rem; }
-    .nexus-nav__icon svg { width: 18px; height: 18px; }
-    .nexus-nav__back { padding: 6px 12px; font-size: 0.75rem; gap: 6px; }
-
-    /* Character */
-    .nexus-lobby__character { height: 66vh; bottom: 160px; }
-
-    /* Aura */
-    .nexus-lobby__aura { width: min(500px, 80vw); height: min(500px, 80vw); }
-
-    /* CTA */
-    .nexus-lobby__cta { bottom: 200px; width: 90%; }
-    .nexus-lobby__tagline { font-size: 0.85rem; letter-spacing: 3px; margin-bottom: 4px; }
-    .nexus-lobby__tagline-sub { font-size: 0.6rem; letter-spacing: 2px; margin-bottom: 12px; }
-    .nexus-lobby__cta-btn { padding: 12px 28px; min-width: 180px; height: 44px; font-size: 12px; letter-spacing: 1.5px; }
-
-    /* Lobby cards — horizontal scroll bar at bottom */
-    .nexus-lobby__card-strip {
-      position: fixed; bottom: 0; top: auto; transform: none;
-      display: flex; flex-direction: row; gap: 10px; width: 100%; left: 0; right: 0;
-      padding: 0 12px 16px; overflow-x: auto; z-index: 25;
-      -webkit-overflow-scrolling: touch; scrollbar-width: none;
-      background: linear-gradient(to top, rgba(5,6,8,0.98) 60%, rgba(5,6,8,0.8) 80%, transparent 100%);
-      padding-top: 30px;
-    }
-    .nexus-lobby__left, .nexus-lobby__right {
-      position: static; top: auto; transform: none;
-      flex-direction: row; gap: 10px; width: auto;
-      flex-shrink: 0;
-    }
-    .nexus-lobby__card-strip::-webkit-scrollbar { display: none; }
-    .nexus-lobby-card {
-      min-width: 150px; height: 100px; flex-shrink: 0;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-    }
-    .nexus-lobby-card:active { transform: scale(0.97); }
-    .nexus-lobby-card__content { padding: 10px 14px; }
-    .nexus-lobby-card__badge { font-size: 0.5rem; padding: 2px 8px; border-radius: 3px; margin-bottom: 3px; }
-    .nexus-lobby-card__title { font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 2px; }
-    .nexus-lobby-card__subtitle { font-size: 0.55rem; letter-spacing: 1px; }
-
-    /* Bottom bar — replaced by card strip */
-    .nexus-lobby__bottom { display: none; }
-  }
-
-  @media (max-width: 480px) {
-    .nexus-nav__brand-text { font-size: 0.75rem; }
-    .nexus-lobby__character { height: 60vh; bottom: 150px; }
-    .nexus-lobby__cta { bottom: 180px; }
-    .nexus-lobby__tagline { font-size: 0.75rem; }
-    .nexus-lobby__cta-btn { padding: 10px 24px; min-width: 160px; height: 40px; font-size: 11px; }
-    .nexus-lobby-card { min-width: 130px; height: 80px; }
-    .nexus-lobby-card__title { font-size: 0.6rem; }
-  }
-
-  /* ======== STOREFRONT (fn-* classes) ======== */
-  :root {
-    --ff-primary: #FFB000;
-    --ff-bg: #0F0F12;
-    --ff-panel: #18181A;
-    --ff-border: #2A2A2D;
-    --ff-hero-title-pc: 80px;
-    --ff-hero-title-mb: 40px;
-    --ff-card-title-pc: 16px;
-    --ff-card-title-mb: 14px;
-    --ff-price-pc: 20px;
-    --ff-price-mb: 16px;
-    --ff-font-header: 'Impact', 'Teko', 'Bebas Neue', sans-serif;
-    --ff-font-body: 'Rajdhani', 'Roboto', sans-serif;
-    --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .fn-section-bg-image {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    background-size: cover; background-position: center;
-    opacity: 0; z-index: 0; pointer-events: none;
-  }
-  .fn-section-bg-image::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, var(--ff-bg) 0%, transparent 15%, transparent 85%, var(--ff-bg) 100%);
-  }
-
-  .fn-hero-wrapper { padding: 30px 5% 10px; }
-  .fn-hero {
-    position: relative; width: 100%; height: 400px;
-    background-color: #111; background-size: cover; background-position: center;
-    display: flex; align-items: center; padding: 0 5%; border-radius: 16px;
-    border: 1px solid var(--ff-border); overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    transition: border-color 0.4s ease, box-shadow 0.4s ease;
-  }
-  .fn-hero:hover { border-color: rgba(255,176,0,0.3); box-shadow: 0 20px 55px rgba(0,0,0,0.6), 0 0 30px rgba(255,176,0,0.08); }
-  .fn-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(90deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 50%, transparent 100%);
-    z-index: 1;
-  }
-  .fn-hero-shine {
-    position: absolute; top: 0; left: -60%; width: 35%; height: 100%;
-    background: linear-gradient(115deg, transparent, rgba(255,255,255,0.06), transparent);
-    transform: skewX(-20deg); animation: fnShineOnce 1.6s ease-out 0.4s 1 both; z-index: 2;
-  }
-  @keyframes fnShineOnce { 0% { left: -60%; } 100% { left: 130%; } }
-
-  .fn-hero-content { position: relative; z-index: 3; max-width: 600px; }
-  .fn-hero-badge {
-    border: 1px solid var(--ff-primary); color: var(--ff-primary);
-    padding: 4px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
-    display: inline-flex; align-items: center; gap: 6px; margin-bottom: 15px;
-    border-radius: 4px; box-shadow: 0 0 12px rgba(255,176,0,0.2);
-  }
-  .fn-hero h1 { font-family: var(--ff-font-header); font-size: var(--ff-hero-title-pc); line-height: 1; margin: 0 0 15px 0; text-transform: uppercase; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); color: #fff;}
-  .fn-hero h1 span { color: var(--ff-primary); }
-  .fn-hero p { color: #ccc; font-size: 16px; line-height: 1.5; }
-
-  .fn-container { max-width: 1600px; margin: 0 auto; padding: 30px 20px; display: flex; gap: 30px; position: relative; z-index: 1; }
-  .fn-sidebar { width: 280px; flex-shrink: 0; }
-  .fn-main { flex-grow: 1; width: 100%; }
-
-  .fn-toolbar { background: var(--ff-panel); border: 1px solid var(--ff-border); border-radius: 10px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; transition: var(--transition); }
-  .fn-toolbar:hover { border-color: #3a3a3d; }
-  .fn-toolbar-count { color: #aaa; font-size: 14px; text-transform: uppercase; font-weight: 600; }
-  .fn-toolbar-actions { display: flex; gap: 20px; align-items: center; }
-  .fn-select { background: transparent; color: #fff; border: none; outline: none; font-family: var(--ff-font-body); font-weight: 600; cursor: pointer; }
-  .fn-select option { background: var(--ff-panel); }
-
-  .fn-filter-widget { background: var(--ff-panel); border: 1px solid var(--ff-border); border-radius: 10px; padding: 20px; margin-bottom: 20px; transition: var(--transition); }
-  .fn-filter-widget:hover { border-color: #3a3a3d; }
-  .fn-filter-title { font-size: 14px; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid var(--ff-border); }
-  .fn-filter-list { list-style: none; padding: 0; margin: 0; }
-  .fn-filter-list li { margin-bottom: 12px; }
-  .fn-filter-label { display: flex; justify-content: space-between; cursor: pointer; color: #bbb; font-size: 14px; transition: var(--transition); }
-  .fn-filter-label:hover, .fn-filter-checkbox:checked + span { color: var(--ff-primary); }
-  .fn-filter-checkbox { display: none; }
-  .fn-color-swatches { display: flex; flex-wrap: wrap; gap: 10px; }
-  .fn-color-box { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #333; cursor: pointer; transition: var(--transition); }
-  .fn-color-box:hover { transform: scale(1.12); }
-  .fn-filter-checkbox:checked + .fn-color-box { border-color: var(--ff-primary); box-shadow: 0 0 10px var(--ff-primary); }
-  .fn-size-swatches { display: flex; flex-wrap: wrap; gap: 10px; }
-  .fn-size-box { border: 1px solid #444; padding: 5px 12px; color: #ccc; cursor: pointer; border-radius: 4px; font-weight: 600; transition: var(--transition); }
-  .fn-size-box:hover { border-color: var(--ff-primary); color: var(--ff-primary); }
-  .fn-filter-checkbox:checked + .fn-size-box { border-color: var(--ff-primary); color: var(--ff-primary); background: rgba(255,176,0,0.08); }
-
-  .fn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
-  .fn-card-frame { --cut: 18px; clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); background: var(--ff-border); padding: 1px; cursor: pointer; transition: background 0.35s ease, transform 0.35s ease; }
-  .fn-card-frame:hover { background: linear-gradient(135deg, var(--ff-primary), rgba(255,176,0,0.15)); transform: translateY(-6px); }
-  .fn-card-inner { clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); background: var(--ff-panel); padding: 14px; height: 100%; display: flex; flex-direction: column; position: relative; transition: background 0.35s ease; }
-  .fn-card-id { position: absolute; top: 10px; right: 14px; font-size: 10px; color: #555; letter-spacing: 1px; font-weight: 700; z-index: 2; }
-  .fn-card-badge { position: absolute; top: 12px; left: 0; font-size: 10px; font-weight: bold; padding: 4px 14px 4px 10px; z-index: 3; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, 82% 100%, 0% 100%); }
-  .bg-purple { background: #8000FF; color: white; }
-  .bg-red { background: #FF3333; color: white; }
-  .bg-orange { background: #FF6600; color: white; }
-  .bg-blue { background: #0055FF; color: white; }
-  .fn-card-img-wrap { width: 100%; aspect-ratio: 1/1; margin-bottom: 14px; overflow: hidden; position: relative; background: linear-gradient(135deg, #1c1c1f, #0c0c0d); }
-  .fn-card-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease, filter 0.5s ease; }
-  .fn-card-frame:hover .fn-card-img { transform: scale(1.06); filter: brightness(0.8) saturate(1.1); }
-  .fn-no-image { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1c1c1f 0%, #0c0c0d 100%); }
-  .fn-no-image span { color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-  .fn-corner { position: absolute; width: 16px; height: 16px; border-color: rgba(255,255,255,0.18); transition: border-color 0.35s ease; z-index: 2; }
-  .fn-corner-tl { top: 6px; left: 6px; border-top: 2px solid; border-left: 2px solid; }
-  .fn-corner-br { bottom: 6px; right: 6px; border-bottom: 2px solid; border-right: 2px solid; }
-  .fn-card-frame:hover .fn-corner { border-color: var(--ff-primary); }
-  .fn-scan-line { position: absolute; left: 0; top: -10%; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--ff-primary), transparent); opacity: 0; z-index: 2; }
-  .fn-card-frame:hover .fn-scan-line { animation: fnScan 1.4s linear infinite; }
-  @keyframes fnScan { 0% { top: -5%; opacity: 0; } 10% { opacity: 0.9; } 90% { opacity: 0.9; } 100% { top: 100%; opacity: 0; } }
-  .fn-card-title { font-size: var(--ff-card-title-pc); color: #fff; margin: 0 0 6px 0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-  .fn-card-stars { color: var(--ff-primary); font-size: 12px; margin-bottom: 10px; }
-  .fn-card-stars span { color: #666; }
-  .fn-card-divider { height: 1px; width: 30%; background: var(--ff-border); margin-bottom: 12px; position: relative; overflow: hidden; }
-  .fn-card-divider::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--ff-primary); transition: width 0.45s ease; }
-  .fn-card-frame:hover .fn-card-divider::after { width: 100%; }
-  .fn-card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-  .fn-card-price-wrap { display: flex; align-items: center; gap: 8px; }
-  .fn-price { font-size: var(--ff-price-pc); font-weight: bold; color: #fff; }
-  .fn-compare { font-size: calc(var(--ff-price-pc) * 0.7); color: #666; text-decoration: line-through; }
-  .fn-cart-btn { width: 42px; height: 42px; border: none; background: rgba(255,176,0,0.08); clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); color: var(--ff-primary); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: var(--transition); position: relative; z-index: 5; }
-  .fn-cart-btn:hover { background: var(--ff-primary); color: #111; transform: scale(1.08); }
-  .fn-cart-btn:active { transform: scale(0.92); }
-  .fn-cart-btn svg { width: 17px; fill: currentColor; }
-  .spinner-icon { animation: spin 1s linear infinite; display: none; }
-  @keyframes spin { 100% { transform: rotate(360deg); } }
-
-  .fn-modal-overlay { position: fixed !important; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
-  .fn-modal-overlay.active { opacity: 1; visibility: visible; }
-  .fn-modal-frame { --mcut: 26px; position: relative; width: 960px; max-width: 100%; clip-path: polygon(var(--mcut) 0, 100% 0, 100% calc(100% - var(--mcut)), calc(100% - var(--mcut)) 100%, 0 100%, 0 var(--mcut)); background: linear-gradient(135deg, var(--ff-primary), rgba(255,255,255,0.06) 45%, var(--ff-primary) 100%); padding: 1.5px; transform: scale(0.94) translateY(10px); opacity: 0; transition: transform 0.35s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease; }
-  .fn-modal-overlay.active .fn-modal-frame { transform: scale(1) translateY(0); opacity: 1; }
-  .fn-modal-box { clip-path: polygon(var(--mcut) 0, 100% 0, 100% calc(100% - var(--mcut)), calc(100% - var(--mcut)) 100%, 0 100%, 0 var(--mcut)); background: #111113; display: flex; max-height: 88vh; overflow: hidden; position: relative; }
-  .fn-modal-box::before { content: ''; position: absolute; left: 0; top: -8%; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, var(--ff-primary), transparent); opacity: 0; z-index: 30; pointer-events: none; }
-  .fn-modal-overlay.active .fn-modal-box::before { animation: fnModalScan 0.9s ease-out 0.15s 1; }
-  @keyframes fnModalScan { 0% { top: -8%; opacity: 0; } 15% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
-  .fn-modal-close { position: absolute; top: 16px; right: 16px; width: 38px; height: 38px; background: rgba(255,255,255,0.06); clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); border: none; color: #fff; font-size: 15px; cursor: pointer; z-index: 20; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
-  .fn-modal-close:hover { background: var(--ff-primary); color: #111; transform: scale(1.08); }
-  .fn-modal-media { width: 46%; background: #0a0a0b; display: flex; flex-direction: column; gap: 12px; padding: 22px; border-right: 1px solid rgba(255,255,255,0.06); }
-  .fn-modal-media-frame { position: relative; flex: 1; min-height: 260px; overflow: hidden; border-radius: 4px; background: linear-gradient(135deg, #1c1c1f, #0c0c0d); }
-  .fn-modal-media-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .fn-modal-media-frame .fn-corner { border-color: rgba(255,176,0,0.5); }
-  .fn-modal-stock-tag { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); border: 1px solid rgba(92,255,160,0.4); color: #5CFFA0; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 5px 10px; border-radius: 3px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; z-index: 5; }
-  .fn-modal-stock-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: #5CFFA0; box-shadow: 0 0 6px #5CFFA0; animation: fnDotPulse 1.6s ease-in-out infinite; }
-  .fn-modal-stock-tag.out { border-color: rgba(255,90,90,0.4); color: #FF6B6B; }
-  .fn-modal-stock-tag.out .dot { background: #FF6B6B; box-shadow: 0 0 6px #FF6B6B; }
-  @keyframes fnDotPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-  .fn-modal-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
-  .fn-modal-thumb { width: 54px; height: 54px; flex-shrink: 0; border: 1px solid var(--ff-border); border-radius: 3px; overflow: hidden; cursor: pointer; opacity: 0.55; transition: var(--transition); }
-  .fn-modal-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .fn-modal-thumb:hover { opacity: 0.9; }
-  .fn-modal-thumb.active { border-color: var(--ff-primary); opacity: 1; box-shadow: 0 0 8px rgba(255,176,0,0.35); }
-  .fn-modal-info { width: 54%; display: flex; flex-direction: column; padding: 30px 32px 22px; }
-  .fn-modal-info-scroll { flex: 1; overflow-y: auto; padding-right: 8px; margin-bottom: 18px; }
-  .fn-modal-tag { display: inline-block; font-size: 11px; letter-spacing: 2px; color: var(--ff-primary); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; opacity: 0.9; }
-  .fn-modal-title { font-family: var(--ff-font-header); font-size: 28px; text-transform: uppercase; margin: 0 0 8px 0; line-height: 1.08; opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.3s ease; }
-  .fn-modal-title.loaded { opacity: 1; transform: translateY(0); }
-  .fn-modal-stars { color: var(--ff-primary); font-size: 13px; margin-bottom: 14px; }
-  .fn-modal-stars span { color: #666; }
-  .fn-modal-price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  .fn-modal-price { font-size: 25px; font-weight: 800; color: #fff; }
-  .fn-modal-compare { font-size: 15px; color: #666; text-decoration: line-through; }
-  .fn-modal-discount { font-size: 11px; font-weight: 700; background: rgba(255,51,51,0.15); color: #FF6B6B; padding: 3px 8px; border-radius: 3px; text-transform: uppercase; }
-  .fn-modal-divider { height: 1px; background: linear-gradient(90deg, var(--ff-border), transparent); margin-bottom: 16px; }
-  .fn-modal-desc { color: #9a9a9d; font-size: 14px; line-height: 1.7; margin-bottom: 18px; }
-  .fn-modal-option-group { margin-bottom: 16px; }
-  .fn-modal-option-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 8px; display: block; font-weight: 700; }
-  .fn-modal-option-values { display: flex; flex-wrap: wrap; gap: 8px; }
-  .fn-opt-btn { border: 1px solid #3a3a3d; background: transparent; color: #ccc; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 3px; transition: var(--transition); font-family: var(--ff-font-body); }
-  .fn-opt-btn:hover { border-color: var(--ff-primary); color: var(--ff-primary); }
-  .fn-opt-btn.active { border-color: var(--ff-primary); background: rgba(255,176,0,0.12); color: var(--ff-primary); }
-  .fn-opt-btn:disabled { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
-  .fn-opt-color { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #333; cursor: pointer; transition: var(--transition); }
-  .fn-opt-color:hover { transform: scale(1.1); }
-  .fn-opt-color.active { border-color: var(--ff-primary); box-shadow: 0 0 10px var(--ff-primary); }
-  .fn-modal-qty-row { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
-  .fn-modal-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #888; font-weight: 700; }
-  .fn-qty-stepper { display: flex; align-items: center; border: 1px solid #3a3a3d; border-radius: 4px; overflow: hidden; }
-  .fn-qty-btn { width: 34px; height: 34px; background: transparent; border: none; color: #ccc; font-size: 16px; cursor: pointer; transition: var(--transition); }
-  .fn-qty-btn:hover { background: var(--ff-primary); color: #111; }
-  .fn-qty-stepper input { width: 44px; height: 34px; background: #1a1a1c; border: none; border-left: 1px solid #3a3a3d; border-right: 1px solid #3a3a3d; color: #fff; text-align: center; font-weight: 700; font-family: var(--ff-font-body); }
-  .fn-modal-add { position: relative; overflow: hidden; background: var(--ff-primary); color: #111; border: none; padding: 16px; font-size: 15px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); transition: var(--transition); }
-  .fn-modal-add:hover:not(:disabled) { box-shadow: 0 0 20px rgba(255,176,0,0.4); }
-  .fn-modal-add:disabled { background: #3a3a3d; color: #777; cursor: not-allowed; }
-  .fn-modal-add-text { position: relative; z-index: 2; }
-  .fn-modal-add-progress { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: rgba(0,0,0,0.15); transition: width 0.4s ease; z-index: 1; }
-  .fn-modal-add.loading .fn-modal-add-progress { width: 100%; }
-
-  .fn-toast { position: fixed !important; bottom: 0; left: 50%; transform: translateX(-50%) translateY(50px); background: #111; border: 1px solid var(--ff-primary); color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: bold; opacity: 0; visibility: hidden; transition: var(--transition); z-index: 10000; }
-  .fn-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
-
-  .fn-fire-sparks { position: absolute; bottom: 0; left: 0; width: 100%; height: 220px; overflow: hidden; pointer-events: none; z-index: 1; }
-  .fn-spark { position: absolute; bottom: -10px; border-radius: 50%; background: radial-gradient(circle, #fff6c8 0%, var(--ff-primary) 45%, transparent 80%); box-shadow: 0 0 5px 1px rgba(255,140,0,0.4); opacity: 0; animation-name: fnSparkRise; animation-timing-function: ease-in; animation-iteration-count: infinite; }
-  @keyframes fnSparkRise { 0% { transform: translateY(0) translateX(0) scale(0.6); opacity: 0; } 15% { opacity: 0.9; } 100% { transform: translateY(-220px) translateX(var(--drift)) scale(1); opacity: 0; } }
-  .fn-fire-glowline { display: none;position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #ff6a00, var(--ff-primary), #ff6a00, transparent); filter: blur(4px); animation: fnGlowPulse 3.2s ease-in-out infinite; z-index: 2; }
-  @keyframes fnGlowPulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.85; } }
-
-  .fn-mobile-filter-btn { display: none; }
-  @media (max-width: 1200px) { .fn-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 990px) {
-    .fn-container { flex-direction: column; }
-    .fn-sidebar { display: none; }
-    .fn-mobile-filter-btn { display: inline-block; background: var(--ff-panel); border: 1px solid var(--ff-primary); color: white; padding: 10px 20px; border-radius: 6px; margin-bottom: 20px; cursor: pointer; width: 100%; transition: var(--transition); }
-    .fn-sidebar.open { display: block; position: fixed; top: 0; left: 0; width: 300px; height: 100%; background: #111; z-index: 999; padding: 20px; overflow-y: auto; border-right: 1px solid var(--ff-primary); }
-    .fn-hero { height: 320px; }
-    .fn-hero h1 { font-size: var(--ff-hero-title-mb); }
-    .fn-modal-box { flex-direction: column; overflow-y: auto; }
-    .fn-modal-media, .fn-modal-info { width: 100%; }
-    .fn-modal-media { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .fn-modal-frame { --mcut: 18px; }
-  }
-  @media (max-width: 768px) {
-    .fn-hero-wrapper { padding: 15px 4% 5px; }
-    .fn-hero { border-radius: 12px; }
-    .fn-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .fn-card-frame { --cut: 12px; }
-    .fn-card-inner { padding: 10px; }
-    .fn-card-title { font-size: var(--ff-card-title-mb); }
-    .fn-price { font-size: var(--ff-price-mb); }
-    .fn-cart-btn { width: 34px; height: 34px; }
-    .fn-fire-sparks { height: 140px; }
-  }
-
-  /* ======== COLLECTION CARDS GRID ======== */
-  .nexus-coll-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
-    max-width: 1500px; margin: 0 auto; padding: 10px 0 40px;
-  }
-  .nexus-coll-card {
-    position: relative; border-radius: 16px; overflow: hidden;
-    background: #111318; border: 1px solid rgba(255,255,255,0.06);
-    transition: transform 0.4s cubic-bezier(0.22,0.9,0.32,1), box-shadow 0.4s ease, border-color 0.4s ease;
-    cursor: pointer; display: flex; flex-direction: column;
-  }
-  .nexus-coll-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,199,44,0.15);
-    border-color: rgba(255,199,44,0.25);
-  }
-  .nexus-coll-card-media {
-    position: relative; height: 220px; overflow: hidden;
-    background: #0a0b0e;
-  }
-  .nexus-coll-card-media::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 50%, rgba(17,19,24,0.95) 100%);
-    z-index: 1; pointer-events: none;
-  }
-  .nexus-coll-card-img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.22,0.9,0.32,1), filter 0.6s ease;
-  }
-  .nexus-coll-card:hover .nexus-coll-card-img {
-    transform: scale(1.08); filter: brightness(1.1);
-  }
-  .nexus-coll-card-noimg {
-    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, #1a1d24, #0c0c0d);
-  }
-  .nexus-coll-card-noimg svg { width: 48px; height: 48px; fill: #2a2e38; }
-  .nexus-coll-card-badge {
-    position: absolute; top: 14px; left: 14px; z-index: 3;
-    padding: 6px 14px; border-radius: 6px; font-size: 10px; font-weight: 700;
-    letter-spacing: 1.5px; text-transform: uppercase;
-    color: #fff; background: rgba(0,0,0,0.55); backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,199,44,0.3);
-  }
-  .nexus-coll-card-count-tag {
-    position: absolute; top: 14px; right: 14px; z-index: 3;
-    padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700;
-    letter-spacing: 0.5px; color: #fff;
-    background: rgba(255,199,44,0.15); backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,199,44,0.25);
-    font-family: 'Orbitron', sans-serif;
-  }
-  .nexus-coll-card-content {
-    padding: 20px 20px 22px; flex: 1; display: flex; flex-direction: column;
-    position: relative; z-index: 2;
-  }
-  .nexus-coll-card-title {
-    font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 700;
-    color: #fff; letter-spacing: 0.3px; line-height: 1.3; margin: 0 0 6px 0;
-    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .nexus-coll-card-subtitle {
-    font-family: 'Poppins', sans-serif; font-size: 13px; color: #6b7280;
-    line-height: 1.5; margin: 0 0 16px 0;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .nexus-coll-card-divider {
-    height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 16px;
-    position: relative; overflow: hidden;
-  }
-  .nexus-coll-card-divider::after {
-    content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%;
-    background: linear-gradient(90deg, var(--nx-gold), transparent);
-    transition: width 0.5s cubic-bezier(0.22,0.9,0.32,1);
-  }
-  .nexus-coll-card:hover .nexus-coll-card-divider::after { width: 100%; }
-  .nexus-coll-card-bottom {
-    display: flex; justify-content: space-between; align-items: center; margin-top: auto;
-  }
-  .nexus-coll-card-count {
-    font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700;
-    color: var(--nx-gold); letter-spacing: 0.5px;
-  }
-  .nexus-coll-card-count-label {
-    font-family: 'Poppins', sans-serif; font-size: 12px; color: #6b7280;
-    text-transform: uppercase; letter-spacing: 0.5px; margin-left: 4px;
-  }
-  .nexus-coll-card-arrow {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: rgba(255,199,44,0.08); border: 1px solid rgba(255,199,44,0.2);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.3s cubic-bezier(0.22,0.9,0.32,1);
-  }
-  .nexus-coll-card-arrow svg {
-    width: 18px; height: 18px; fill: var(--nx-gold);
-    transition: transform 0.3s cubic-bezier(0.22,0.9,0.32,1);
-  }
-  .nexus-coll-card:hover .nexus-coll-card-arrow {
-    background: var(--nx-gold); border-color: var(--nx-gold);
-    box-shadow: 0 0 20px rgba(255,199,44,0.3);
-  }
-  .nexus-coll-card:hover .nexus-coll-card-arrow svg {
-    fill: #111; transform: translateX(3px);
-  }
-
-  /* Storefront view for collections */
-  .nexus-coll-storeview { display: none; position: relative; }
-  .nexus-coll-storeview.active { display: block; }
-  .nexus-coll-storeview-bg {
-    position: fixed; inset: 0; width: 100%; height: 100%;
-    background-size: cover; background-position: center; z-index: 0;
-    pointer-events: none;
-  }
-  .nexus-coll-storeview-bg::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, var(--nx-bg-dark) 0%, transparent 15%, transparent 85%, var(--nx-bg-dark) 100%);
-  }
-  .nexus-coll-storeview > *:not(.nexus-coll-storeview-bg) { position: relative; z-index: 1; }
-  .nexus-coll-back {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 20px; border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(10,6,20,0.7); backdrop-filter: blur(12px);
-    color: #fff; font-size: 0.8rem; font-weight: 600; letter-spacing: 2px;
-    text-transform: uppercase; cursor: pointer; border-radius: 8px;
-    transition: all 0.3s; margin-bottom: 24px; text-decoration: none;
-    font-family: 'Inter', sans-serif;
-  }
-  .nexus-coll-back:hover {
-    border-color: var(--nx-gold); background: rgba(255,199,44,0.08);
-    box-shadow: 0 0 20px rgba(255,199,44,0.2);
-  }
-  .nexus-coll-back svg { width: 16px; height: 16px; fill: currentColor; transition: transform 0.3s; }
-  .nexus-coll-back:hover svg { transform: translateX(-3px); }
-  .nexus-coll-sort-select {
-    background: transparent; color: #fff; border: none; outline: none;
-    font-family: var(--ff-font-body); font-weight: 600; cursor: pointer;
-  }
-  .nexus-coll-sort-select option { background: var(--ff-panel); }
-
-  @media (max-width: 1200px) { .nexus-coll-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 768px) {
-    .nexus-coll-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-    .nexus-coll-card-media { height: 180px; }
-    .nexus-coll-card-content { padding: 16px; }
-    .nexus-coll-card-title { font-size: 15px; }
-    .nexus-coll-card-subtitle { font-size: 12px; margin-bottom: 12px; }
-  }
-  @media (max-width: 480px) {
-    .nexus-coll-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
-  }
 </style>
 
 
@@ -1630,7 +105,7 @@
       <div class="nexus-loader__counter" id="nexus-counter-{{ nexus_id }}">0%</div>
       <div class="nexus-loader__bar-wrapper"><div class="nexus-loader__bar" id="nexus-bar-{{ nexus_id }}"></div></div>
       <p class="nexus-loader__status" id="nexus-status-{{ nexus_id }}">LOADING ASSETS...</p>
-      <p class="nexus-loader__japanese">{{ section.settings.loading_japanese | default: 'ロード中...' }}</p>
+      <p class="nexus-loader__japanese">{{ section.settings.loading_japanese | default: 'ãƒ­ãƒ¼ãƒ‰ä¸­...' }}</p>
     </div>
   </div>
 
@@ -2088,7 +563,7 @@
                             {%- endif -%}
                           </div>
                           <h3 class="nx-sf-card-title">{{ product.title }}</h3>
-                          <div class="nx-sf-card-stars">★★★★★ <span>(128)</span></div>
+                          <div class="nx-sf-card-stars">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(128)</span></div>
                           <div class="nx-sf-card-divider"></div>
                           <div class="nx-sf-card-bottom">
                             <div class="nx-sf-price-wrap">
@@ -2149,7 +624,7 @@
             <div class="nx-sf-modal-overlay" id="nx-sf-modal-{{ block.id }}">
               <div class="nx-sf-modal-frame">
                 <div class="nx-sf-modal-box">
-                  <button class="nx-sf-modal-close" onclick="nxSFCloseQV('{{ block.id }}')">✕</button>
+                  <button class="nx-sf-modal-close" onclick="nxSFCloseQV('{{ block.id }}')">&times;</button>
                   <div class="nx-sf-modal-media">
                     <div class="nx-sf-modal-media-frame">
                       <div class="nx-sf-corner nx-sf-corner-tl"></div>
@@ -2165,7 +640,7 @@
                     <div class="nx-sf-modal-info-scroll">
                       <span class="nx-sf-modal-tag" id="nx-sf-vendor-{{ block.id }}">LOADOUT ITEM</span>
                       <h2 class="nx-sf-modal-title" id="nx-sf-title-{{ block.id }}">Loading Drop...</h2>
-                      <div class="nx-sf-modal-stars">★★★★★ <span>(128 Reviews)</span></div>
+                      <div class="nx-sf-modal-stars">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(128 Reviews)</span></div>
                       <div class="nx-sf-modal-price-row">
                         <span class="nx-sf-modal-price" id="nx-sf-price-{{ block.id }}"></span>
                         <span class="nx-sf-modal-compare" id="nx-sf-compare-{{ block.id }}"></span>
@@ -2181,7 +656,7 @@
                       <div class="nx-sf-modal-qty-row">
                         <span class="nx-sf-modal-label">Quantity</span>
                         <div class="nx-sf-qty-stepper">
-                          <button type="button" class="nx-sf-qty-btn" onclick="nxSFQty('{{ block.id }}', -1)">−</button>
+                          <button type="button" class="nx-sf-qty-btn" onclick="nxSFQty('{{ block.id }}', -1)">-</button>
                           <input type="number" id="nx-sf-qty-{{ block.id }}" value="1" min="1" readonly>
                           <button type="button" class="nx-sf-qty-btn" onclick="nxSFQty('{{ block.id }}', 1)">+</button>
                         </div>
@@ -2199,7 +674,7 @@
               </div>
             </div>
 
-            <div class="nx-sf-toast" id="nx-sf-toast-{{ block.id }}">✔ Successfully added to inventory</div>
+            <div class="nx-sf-toast" id="nx-sf-toast-{{ block.id }}">âœ” Successfully added to inventory</div>
 
             <script>
               (function () {
@@ -2609,7 +1084,7 @@
             <div class="fn-modal-overlay" id="nexus-coll-qv-{{ block.id }}">
               <div class="fn-modal-frame">
                 <div class="fn-modal-box">
-                  <button class="fn-modal-close" onclick="nexusCollCloseQV('{{ block.id }}')">✕</button>
+                  <button class="fn-modal-close" onclick="nexusCollCloseQV('{{ block.id }}')">&times;</button>
                   <div class="fn-modal-media">
                     <div class="fn-modal-media-frame">
                       <div class="fn-corner fn-corner-tl"></div>
@@ -2625,7 +1100,7 @@
                     <div class="fn-modal-info-scroll">
                       <span class="fn-modal-tag" id="nexus-coll-qv-vendor-{{ block.id }}">LOADOUT ITEM</span>
                       <h2 class="fn-modal-title" id="nexus-coll-qv-title-{{ block.id }}">Loading Drop...</h2>
-                      <div class="fn-modal-stars">★★★★★ <span>(128 Reviews)</span></div>
+                      <div class="fn-modal-stars">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(128 Reviews)</span></div>
                       <div class="fn-modal-price-row">
                         <span class="fn-modal-price" id="nexus-coll-qv-price-{{ block.id }}"></span>
                         <span class="fn-modal-compare" id="nexus-coll-qv-compare-{{ block.id }}"></span>
@@ -2637,7 +1112,7 @@
                       <div class="fn-modal-qty-row">
                         <span class="fn-modal-label">Quantity</span>
                         <div class="fn-qty-stepper">
-                          <button type="button" class="fn-qty-btn" id="nexus-coll-qv-minus-{{ block.id }}">−</button>
+                          <button type="button" class="fn-qty-btn" id="nexus-coll-qv-minus-{{ block.id }}">-</button>
                           <input type="number" id="nexus-coll-qv-qty-{{ block.id }}" value="1" min="1" readonly>
                           <button type="button" class="fn-qty-btn" id="nexus-coll-qv-plus-{{ block.id }}">+</button>
                         </div>
@@ -2652,7 +1127,7 @@
             </div>
 
             <!-- TOAST -->
-            <div class="fn-toast" id="nexus-coll-toast-{{ block.id }}">✔ Successfully added to inventory</div>
+            <div class="fn-toast" id="nexus-coll-toast-{{ block.id }}">âœ” Successfully added to inventory</div>
 
             <script>
               (function () {
@@ -2754,7 +1229,7 @@
                     else cardHtml += '<div class="fn-no-image"><span>No Image</span></div>';
                     cardHtml += '</div>';
                     cardHtml += '<h3 class="fn-card-title">' + (product.title || '') + '</h3>';
-                    cardHtml += '<div class="fn-card-stars">★★★★★ <span>(128)</span></div>';
+                    cardHtml += '<div class="fn-card-stars">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(128)</span></div>';
                     cardHtml += '<div class="fn-card-divider"></div>';
                     cardHtml += '<div class="fn-card-bottom"><div class="fn-card-price-wrap">';
                     cardHtml += '<span class="fn-price">' + price + '</span>';
@@ -2831,12 +1306,12 @@
                   var totalPages = Math.ceil(total / perPage);
                   if (totalPages <= 1) { pag.innerHTML = ''; return; }
                   var html = '';
-                  if (currentPage > 1) html += '<a href="#" class="nexus-coll-pag-btn" data-page="' + (currentPage - 1) + '" style="background:#222; padding:10px 15px; color:white; text-decoration:none; border-radius:4px;">←</a>';
+                  if (currentPage > 1) html += '<a href="#" class="nexus-coll-pag-btn" data-page="' + (currentPage - 1) + '" style="background:#222; padding:10px 15px; color:white; text-decoration:none; border-radius:4px;">â†</a>';
                   for (var p = 1; p <= totalPages; p++) {
                     if (p === currentPage) html += '<span style="background:var(--ff-primary); color:#111; padding:10px 15px; border-radius:4px; font-weight:bold;">' + p + '</span>';
                     else html += '<a href="#" class="nexus-coll-pag-btn" data-page="' + p + '" style="background:#222; padding:10px 15px; color:white; text-decoration:none; border-radius:4px;">' + p + '</a>';
                   }
-                  if (currentPage < totalPages) html += '<a href="#" class="nexus-coll-pag-btn" data-page="' + (currentPage + 1) + '" style="background:#222; padding:10px 15px; color:white; text-decoration:none; border-radius:4px;">→</a>';
+                  if (currentPage < totalPages) html += '<a href="#" class="nexus-coll-pag-btn" data-page="' + (currentPage + 1) + '" style="background:#222; padding:10px 15px; color:white; text-decoration:none; border-radius:4px;">â†’</a>';
                   pag.innerHTML = html;
                   pag.querySelectorAll('.nexus-coll-pag-btn').forEach(function (btn) {
                     btn.addEventListener('click', function (e) {
@@ -3278,7 +1753,7 @@
                               {%- endif -%}
                             </div>
                             <h3 class="fn-card-title">{{ product.title }}</h3>
-                            <div class="fn-card-stars">★★★★★ <span>(128)</span></div>
+                            <div class="fn-card-stars">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(128)</span></div>
                             <div class="fn-card-divider"></div>
                             <div class="fn-card-bottom">
                               <div class="fn-card-price-wrap">
@@ -3340,7 +1815,7 @@
             <div class="fn-modal-overlay" id="fn-quickview-{{ block.id }}">
               <div class="fn-modal-frame">
                 <div class="fn-modal-box">
-                  <button class="fn-modal-close" onclick="fnCloseQuickView('{{ block.id }}')">✕</button>
+                  <button class="fn-modal-close" onclick="fnCloseQuickView('{{ block.id }}')">&times;</button>
                   <div class="fn-modal-media">
                     <div class="fn-modal-media-frame" id="qv-img-wrap-{{ block.id }}">
                       <div class="fn-corner fn-corner-tl"></div>
@@ -3356,7 +1831,7 @@
                     <div class="fn-modal-info-scroll">
                       <span class="fn-modal-tag" id="qv-vendor-{{ block.id }}">LOADOUT ITEM</span>
                       <h2 class="fn-modal-title" id="qv-title-{{ block.id }}">Loading Drop...</h2>
-                      <div class="fn-modal-stars">★★★★★ <span>(128 Reviews)</span></div>
+                      <div class="fn-modal-stars">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(128 Reviews)</span></div>
                       <div class="fn-modal-price-row">
                         <span class="fn-modal-price" id="qv-price-{{ block.id }}"></span>
                         <span class="fn-modal-compare" id="qv-compare-{{ block.id }}"></span>
@@ -3368,7 +1843,7 @@
                       <div class="fn-modal-qty-row">
                         <span class="fn-modal-label">Quantity</span>
                         <div class="fn-qty-stepper">
-                          <button type="button" class="fn-qty-btn" id="qv-qty-minus-{{ block.id }}">−</button>
+                          <button type="button" class="fn-qty-btn" id="qv-qty-minus-{{ block.id }}">-</button>
                           <input type="number" id="qv-qty-{{ block.id }}" value="1" min="1" readonly>
                           <button type="button" class="fn-qty-btn" id="qv-qty-plus-{{ block.id }}">+</button>
                         </div>
@@ -3387,7 +1862,7 @@
             </div>
 
             <!-- TOAST -->
-            <div class="fn-toast" id="fn-toast-{{ block.id }}">✔ Successfully added to inventory</div>
+            <div class="fn-toast" id="fn-toast-{{ block.id }}">âœ” Successfully added to inventory</div>
 
             <script>
               (function () {
@@ -3445,13 +1920,11 @@
 
                 // Card click -> Quick View
                 window.fnCardClick = function (event, handle, blockId) {
-                  if (blockId !== bid) return;
                   fnOpenQuickView(handle, blockId);
                 };
 
                 // Add to cart from card
                 window.fnAddIconToCart = function (event, variantId, blockId) {
-                  if (blockId !== bid) return;
                   var btn = event.currentTarget;
                   var cartIcon = btn.querySelector('.cart-icon');
                   var spinnerIcon = btn.querySelector('.spinner-icon');
@@ -3486,20 +1959,19 @@
 
                 // Open Quick View
                 window.fnOpenQuickView = function (handle, blockId) {
-                  if (blockId !== bid) return;
-                  var modal = document.getElementById('fn-quickview-' + bid);
+                  var modal = document.getElementById('fn-quickview-' + blockId);
                   modal.classList.add('active');
                   document.body.style.overflow = 'hidden';
 
-                  document.getElementById('qv-title-' + bid).innerText = 'Loading Drop...';
-                  document.getElementById('qv-price-' + bid).innerText = '';
-                  document.getElementById('qv-compare-' + bid).innerText = '';
-                  document.getElementById('qv-discount-' + bid).style.display = 'none';
-                  document.getElementById('qv-desc-' + bid).innerHTML = '';
-                  document.getElementById('qv-options-' + bid).innerHTML = '';
-                  document.getElementById('qv-thumbs-' + bid).innerHTML = '';
-                  document.getElementById('qv-qty-' + bid).value = 1;
-                  document.getElementById('qv-img-' + bid).src = '';
+                  document.getElementById('qv-title-' + blockId).innerText = 'Loading Drop...';
+                  document.getElementById('qv-price-' + blockId).innerText = '';
+                  document.getElementById('qv-compare-' + blockId).innerText = '';
+                  document.getElementById('qv-discount-' + blockId).style.display = 'none';
+                  document.getElementById('qv-desc-' + blockId).innerHTML = '';
+                  document.getElementById('qv-options-' + blockId).innerHTML = '';
+                  document.getElementById('qv-thumbs-' + blockId).innerHTML = '';
+                  document.getElementById('qv-qty-' + blockId).value = 1;
+                  document.getElementById('qv-img-' + blockId).src = '';
 
                   fetch('/products/' + handle + '.js')
                     .then(function (res) {
@@ -3507,11 +1979,11 @@
                     })
                     .then(function (product) {
                       currentProduct = product;
-                      fnRenderModalProduct(product);
+                      fnRenderModalProduct(product, blockId);
                     });
                 };
 
-                function fnRenderModalProduct(product) {
+                function fnRenderModalProduct(product, bid) {
                   document.getElementById('qv-vendor-' + bid).innerText = product.vendor || 'LOADOUT ITEM';
                   document.getElementById('qv-title-' + bid).innerText = product.title;
                   document.getElementById('qv-desc-' + bid).innerHTML =
@@ -3548,11 +2020,11 @@
                   document.getElementById('qv-img-' + bid).src = defaultVariant.featured_image
                     ? defaultVariant.featured_image.src
                     : images[0] || '';
-                  fnRenderOptions(product);
-                  fnUpdateVariantDisplay(defaultVariant);
+                  fnRenderOptions(product, bid);
+                  fnUpdateVariantDisplay(defaultVariant, bid);
                 }
 
-                function fnRenderOptions(product) {
+                function fnRenderOptions(product, bid) {
                   var wrap = document.getElementById('qv-options-' + bid);
                   wrap.innerHTML = '';
                   if (product.options.length === 1 && product.options[0] === 'Title') return;
@@ -3583,13 +2055,13 @@
                       }
                       btn.addEventListener('click', function () {
                         selectedOptions[index] = val;
-                        fnRenderOptions(product);
+                        fnRenderOptions(product, bid);
                         var match = product.variants.find(function (v) {
                           return [v.option1, v.option2, v.option3].filter(Boolean).every(function (o, i) {
                             return o === selectedOptions[i];
                           });
                         });
-                        if (match) fnUpdateVariantDisplay(match);
+                        if (match) fnUpdateVariantDisplay(match, bid);
                       });
                       valuesWrap.appendChild(btn);
                     });
@@ -3599,7 +2071,7 @@
                   });
                 }
 
-                function fnUpdateVariantDisplay(variant) {
+                function fnUpdateVariantDisplay(variant, bid) {
                   currentVariant = variant;
                   document.getElementById('qv-price-' + bid).innerText = '$' + (variant.price / 100).toFixed(2);
                   var compareEl = document.getElementById('qv-compare-' + bid);
@@ -3637,8 +2109,7 @@
 
                 // Close Quick View
                 window.fnCloseQuickView = function (blockId) {
-                  if (blockId !== bid) return;
-                  document.getElementById('fn-quickview-' + bid).classList.remove('active');
+                  document.getElementById('fn-quickview-' + blockId).classList.remove('active');
                   document.body.style.overflow = '';
                   currentProduct = null;
                   currentVariant = null;
@@ -3649,9 +2120,9 @@
 
                 // Add from modal
                 window.fnAddFromModal = function (blockId) {
-                  if (blockId !== bid || !currentVariant || !currentVariant.available) return;
-                  var qty = document.getElementById('qv-qty-' + bid).value;
-                  var addText = document.getElementById('qv-add-text-' + bid);
+                  if (!currentVariant || !currentVariant.available) return;
+                  var qty = document.getElementById('qv-qty-' + blockId).value;
+                  var addText = document.getElementById('qv-add-text-' + blockId);
                   addText.innerText = 'EQUIPPING...';
 
                   fetch(window.Shopify.routes.root + 'cart/add.js', {
@@ -3664,7 +2135,7 @@
                       document.dispatchEvent(new CustomEvent('cart:build'));
                       if (window.NexusCart) { NexusCart.fetchCart(); }
                       setTimeout(function () {
-                        fnCloseQuickView(bid);
+                        fnCloseQuickView(blockId);
                         if (window.NexusCart) { NexusCart.open(); }
                       }, 900);
                     })
@@ -3675,13 +2146,241 @@
 
                 // Toast
                 window.fnShowToast = function (blockId) {
-                  if (blockId !== bid) return;
-                  var toast = document.getElementById('fn-toast-' + bid);
+                  var toast = document.getElementById('fn-toast-' + blockId);
                   toast.classList.add('show');
                   setTimeout(function () {
                     toast.classList.remove('show');
                   }, 3000);
                 };
+              })();
+            </script>
+
+          {%- when 'card_limited' -%}
+            {%- assign le_collection = block.settings.collection | default: collections.all -%}
+            {%- assign le_limit = block.settings.products_limit | default: 12 -%}
+            {%- assign le_bg_opacity = block.settings.section_bg_opacity | times: 1.0 | divided_by: 100 -%}
+
+            <div class="fn-section-{{ block.id }}">
+              {%- if block.settings.section_bg != blank -%}
+                <div class="fn-section-bg-image" style="background-image: url('{{ block.settings.section_bg | image_url: width: 1920 }}'); opacity: {{ le_bg_opacity }};"></div>
+              {%- endif -%}
+
+              <!-- HERO -->
+              <div class="le-hero">
+                {%- if block.settings.hero_image != blank -%}
+                  <div class="le-hero__bg" style="background-image: url('{{ block.settings.hero_image | image_url: width: 1920 }}');"></div>
+                {%- endif -%}
+                <div class="le-hero__content">
+                  <div class="le-hero__badge">{{ block.settings.badge_text | default: 'EXCLUSIVE COLLECTION' }}</div>
+                  <h2 class="le-hero__title">{{ block.settings.heading | default: 'LIMITED<br>EDITION' }}</h2>
+                  <p class="le-hero__subtitle">{{ block.settings.hero_subtitle | default: 'RARE GEAR. UNMATCHED STYLE.' }}</p>
+                  {%- if block.settings.show_timer -%}
+                    <div class="le-hero__timer">
+                      <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                      {{ block.settings.timer_text | default: 'AVAILABLE FOR A LIMITED TIME ONLY' }}
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.cta_link != blank -%}
+                    <a href="{{ block.settings.cta_link }}" class="le-hero__cta">
+                      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      {{ block.settings.cta_text | default: 'WATCH TRAILER' }}
+                    </a>
+                  {%- endif -%}
+                </div>
+                <div class="le-features">
+                  {%- for i in (1..4) -%}
+                    {%- assign ft = 'feature_' | append: i | append: '_title' -%}
+                    {%- assign fd = 'feature_' | append: i | append: '_desc' -%}
+                    {%- if block.settings[ft] != blank -%}
+                      <div class="le-feature">
+                        <div class="le-feature__icon">
+                          {%- if i == 1 -%}<svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                          {%- elsif i == 2 -%}<svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                          {%- elsif i == 3 -%}<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                          {%- else -%}<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+                          {%- endif -%}
+                        </div>
+                        <div class="le-feature__text">
+                          <h4>{{ block.settings[ft] }}</h4>
+                          <p>{{ block.settings[fd] }}</p>
+                        </div>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+
+              {%- if block.settings.shop_link != blank -%}
+                <a href="{{ block.settings.shop_link }}" class="le-shop-btn">{{ block.settings.shop_text | default: 'SHOP NOW' }}</a>
+              {%- endif -%}
+
+              <!-- CAROUSEL -->
+              <div class="le-carousel-wrap">
+                <h3 class="le-carousel-title">{{ block.settings.carousel_title | default: 'THE COLLECTION' }}</h3>
+                <button class="le-arrow le-arrow--prev" onclick="this.parentNode.querySelector('.le-carousel').scrollBy({left:-280,behavior:'smooth'})">
+                  <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                </button>
+                <div class="le-carousel">
+                  {%- for product in le_collection.products limit: le_limit -%}
+                    {% assign badge_class = '' %}
+                    {% assign badge_text = '' %}
+                    {% if product.tags contains 'New' %}
+                      {% assign badge_class = 'bg-purple' %}{% assign badge_text = 'NEW' %}
+                    {% elsif product.tags contains 'Limited' %}
+                      {% assign badge_class = 'bg-blue' %}{% assign badge_text = 'LIMITED' %}
+                    {% elsif product.tags contains 'Hot' %}
+                      {% assign badge_class = 'bg-orange' %}{% assign badge_text = 'HOT' %}
+                    {% elsif product.compare_at_price > product.price %}
+                      {% assign badge_class = 'bg-red' %}
+                      {% assign discount = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round %}
+                      {% assign badge_text = '-' | append: discount | append: '%' %}
+                    {% endif %}
+
+                    <div class="fn-card-frame" onclick="fnCardClick(event, '{{ product.handle }}', '{{ block.id }}')">
+                      <div class="fn-card-inner">
+                        {% if badge_text != '' %}
+                          <div class="fn-card-badge {{ badge_class }}">{{ badge_text }}</div>
+                        {% endif %}
+                        <span class="fn-card-id">#{{ forloop.index }}</span>
+                        <div class="fn-card-img-wrap">
+                          <div class="fn-corner fn-corner-tl"></div>
+                          <div class="fn-corner fn-corner-br"></div>
+                          <div class="fn-scan-line"></div>
+                          {%- if product.featured_image != blank -%}
+                            <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title | escape }}" class="fn-card-img" loading="lazy">
+                          {%- else -%}
+                            <div class="fn-no-image"><span>No Image</span></div>
+                          {%- endif -%}
+                        </div>
+                        <h3 class="fn-card-title">{{ product.title }}</h3>
+                        <div class="fn-card-stars">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(128)</span></div>
+                        <div class="fn-card-divider"></div>
+                        <div class="fn-card-bottom">
+                          <div class="fn-card-price-wrap">
+                            <span class="fn-price">{{ product.price | money }}</span>
+                            {% if product.compare_at_price > product.price %}
+                              <span class="fn-compare">{{ product.compare_at_price | money }}</span>
+                            {% endif %}
+                          </div>
+                          <button class="fn-cart-btn" onclick="event.stopPropagation(); fnAddIconToCart(event, {{ product.variants.first.id }}, '{{ block.id }}')" aria-label="Add to cart">
+                            <svg class="cart-icon" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                            <svg class="spinner-icon" viewBox="0 0 50 50" style="display:none;"><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="80" stroke-dashoffset="60"/></svg>
+                            <svg class="check-icon" viewBox="0 0 24 24" style="display:none;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  {%- endfor -%}
+                </div>
+                <button class="le-arrow le-arrow--next" onclick="this.parentNode.querySelector('.le-carousel').scrollBy({left:280,behavior:'smooth'})">
+                  <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                </button>
+              </div>
+
+              <!-- BOTTOM BAR -->
+              <div class="le-bottom-bar">
+                <div class="le-bottom-features">
+                  {%- for i in (1..4) -%}
+                    {%- assign bt = 'bottom_feat_' | append: i | append: '_title' -%}
+                    {%- assign bd = 'bottom_feat_' | append: i | append: '_desc' -%}
+                    {%- if block.settings[bt] != blank -%}
+                      <div class="le-bottom-feat">
+                        <div class="le-bottom-feat__icon">
+                          {%- if i == 1 -%}<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                          {%- elsif i == 2 -%}<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                          {%- elsif i == 3 -%}<svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                          {%- else -%}<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+                          {%- endif -%}
+                        </div>
+                        <div class="le-bottom-feat__text">
+                          <h5>{{ block.settings[bt] }}</h5>
+                          <p>{{ block.settings[bd] }}</p>
+                        </div>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+                <div class="le-brand-badge">
+                  <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  <div>
+                    {{ block.settings.brand_badge | default: 'BOOYAH!' }}
+                    <span>{{ block.settings.brand_sub | default: 'BE THE LEGEND' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              {%- if block.settings.enable_fire_effect -%}
+                <div class="fn-fire-glowline"></div>
+                <div class="fn-fire-sparks" id="le-sparks-{{ block.id }}"></div>
+              {%- endif -%}
+            </div>
+
+            <!-- QUICK VIEW MODAL -->
+            <div class="fn-modal-overlay" id="fn-quickview-{{ block.id }}">
+              <div class="fn-modal-frame">
+                <div class="fn-modal-box">
+                  <button class="fn-modal-close" onclick="fnCloseQuickView('{{ block.id }}')">&times;</button>
+                  <div class="fn-modal-media">
+                    <div class="fn-modal-media-frame">
+                      <div class="fn-corner fn-corner-tl"></div>
+                      <div class="fn-corner fn-corner-br"></div>
+                      <div class="fn-modal-stock-tag" id="qv-stock-{{ block.id }}">
+                        <span class="dot"></span><span id="qv-stock-text-{{ block.id }}">IN STOCK</span>
+                      </div>
+                      <img id="qv-img-{{ block.id }}" src="" alt="">
+                    </div>
+                    <div class="fn-modal-thumbs" id="qv-thumbs-{{ block.id }}"></div>
+                  </div>
+                  <div class="fn-modal-info">
+                    <div class="fn-modal-info-scroll">
+                      <span class="fn-modal-tag" id="qv-vendor-{{ block.id }}">LOADOUT ITEM</span>
+                      <h2 class="fn-modal-title" id="qv-title-{{ block.id }}">Loading Drop...</h2>
+                      <div class="fn-modal-stars">&#9733;&#9733;&#9733;&#9733;&#9733; <span>(128 Reviews)</span></div>
+                      <div class="fn-modal-price-row">
+                        <span class="fn-modal-price" id="qv-price-{{ block.id }}"></span>
+                        <span class="fn-modal-compare" id="qv-compare-{{ block.id }}"></span>
+                        <span class="fn-modal-discount" id="qv-discount-{{ block.id }}" style="display:none;"></span>
+                      </div>
+                      <div class="fn-modal-divider"></div>
+                      <div class="fn-modal-desc" id="qv-desc-{{ block.id }}"></div>
+                      <div class="fn-modal-options" id="qv-options-{{ block.id }}"></div>
+                      <div class="fn-modal-qty-row">
+                        <span class="fn-modal-label">Quantity</span>
+                        <div class="fn-qty-stepper">
+                          <button type="button" class="fn-qty-btn" id="qv-qty-minus-{{ block.id }}">-</button>
+                          <input type="number" id="qv-qty-{{ block.id }}" value="1" min="1" readonly>
+                          <button type="button" class="fn-qty-btn" id="qv-qty-plus-{{ block.id }}">+</button>
+                        </div>
+                      </div>
+                    </div>
+                    <button class="fn-modal-add" id="qv-add-btn-{{ block.id }}">
+                      <span class="fn-modal-add-text" id="qv-add-text-{{ block.id }}">ADD TO INVENTORY</span>
+                      <span class="fn-modal-add-progress"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="fn-toast" id="fn-toast-{{ block.id }}">âœ” Successfully added to inventory</div>
+
+            <script>
+              (function () {
+                var bid = '{{ block.id }}';
+                var sparksContainer = document.getElementById('le-sparks-' + bid);
+                if (sparksContainer) {
+                  sparksContainer.innerHTML = '';
+                  var count = window.innerWidth < 768 ? 14 : 26;
+                  for (var i = 0; i < count; i++) {
+                    var spark = document.createElement('span');
+                    spark.className = 'fn-spark';
+                    spark.style.left = Math.random() * 100 + '%';
+                    spark.style.width = spark.style.height = (Math.random() * 3.5 + 2).toFixed(1) + 'px';
+                    spark.style.animationDuration = (Math.random() * 3 + 3.5).toFixed(2) + 's';
+                    spark.style.animationDelay = (Math.random() * 6).toFixed(2) + 's';
+                    spark.style.setProperty('--drift', (Math.random() * 50 - 25).toFixed(0) + 'px');
+                    sparksContainer.appendChild(spark);
+                  }
+                }
               })();
             </script>
         {%- endcase -%}
@@ -4272,6 +2971,14 @@
         view.addEventListener('scroll', checkNavScroll, { passive: true });
       });
       window.addEventListener('scroll', checkNavScroll, { passive: true });
+      window.addEventListener('popstate', function () {
+        setTimeout(function () {
+          nexusNav.classList.remove('scrolled');
+          var lobbyActive = document.querySelector('.nexus-view[data-view="lobby"].active');
+          if (lobbyActive) lobbyActive.scrollTop = 0;
+        }, 50);
+      });
+      nexusNav.classList.remove('scrolled');
     }
 
     /* ===== INIT ===== */
@@ -4300,7 +3007,7 @@
     { "type": "text", "id": "currency_amount", "label": "Currency Amount", "default": "4,250" },
     { "type": "text", "id": "loading_title", "label": "Loading Title", "default": "LOADING" },
     { "type": "text", "id": "loading_subtitle", "label": "Loading Subtitle", "default": "ENTERING THE BATTLEFIELD" },
-    { "type": "text", "id": "loading_japanese", "label": "Loading Japanese", "default": "ロード中..." },
+    { "type": "text", "id": "loading_japanese", "label": "Loading Japanese", "default": "ãƒ­ãƒ¼ãƒ‰ä¸­..." },
     { "type": "image_picker", "id": "loading_image", "label": "Loading Background Image" },
     { "type": "text", "id": "loading_video", "label": "Loading Video URL" },
     { "type": "image_picker", "id": "bg_image", "label": "Hero Background Image" },
@@ -4644,6 +3351,74 @@
         { "type": "checkbox", "id": "enable_filters", "label": "Enable Filters", "default": true },
         { "type": "checkbox", "id": "enable_fire_effect", "label": "Enable Fire Spark Animation", "default": true },
         { "type": "checkbox", "id": "enable_sound_effects", "label": "Enable UI Sound Effects", "default": true }
+      ]
+    },
+    {
+      "type": "card_limited",
+      "name": "Limited Edition Card",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Card Title", "default": "LIMITED" },
+        { "type": "text", "id": "subtitle", "label": "Card Subtitle", "default": "LIMITED EDITION" },
+        { "type": "text", "id": "badge", "label": "Badge Text", "default": "LIMITED" },
+        { "type": "image_picker", "id": "card_image", "label": "Card Background Image" },
+        { "type": "color", "id": "glow_color", "label": "Glow Color", "default": "#FFC72C" },
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "left"
+        },
+        { "type": "text", "id": "view_title", "label": "View Title", "default": "LIMITED EDITION" },
+        { "type": "text", "id": "view_subtitle", "label": "View Subtitle", "default": "EXCLUSIVE GEAR" },
+        { "type": "header", "content": "Section Background" },
+        { "type": "image_picker", "id": "section_bg", "label": "Full Section Background Image" },
+        { "type": "range", "id": "section_bg_opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "label": "Background Image Opacity", "default": 15 },
+        { "type": "header", "content": "Hero" },
+        { "type": "image_picker", "id": "hero_image", "label": "Hero Background Image" },
+        { "type": "text", "id": "badge_text", "label": "Badge Text", "default": "EXCLUSIVE COLLECTION" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "LIMITED<br>EDITION" },
+        { "type": "text", "id": "hero_subtitle", "label": "Hero Subtitle", "default": "RARE GEAR. UNMATCHED STYLE." },
+        { "type": "checkbox", "id": "show_timer", "label": "Show Timer Badge", "default": true },
+        { "type": "text", "id": "timer_text", "label": "Timer Text", "default": "AVAILABLE FOR A LIMITED TIME ONLY" },
+        { "type": "text", "id": "cta_text", "label": "CTA Button Text", "default": "WATCH TRAILER" },
+        { "type": "url", "id": "cta_link", "label": "CTA Button Link" },
+        { "type": "header", "content": "Features Sidebar" },
+        { "type": "text", "id": "feature_1_title", "label": "Feature 1 Title", "default": "EXCLUSIVE ITEMS" },
+        { "type": "text", "id": "feature_1_desc", "label": "Feature 1 Description", "default": "Unique designs you won't find anywhere else." },
+        { "type": "text", "id": "feature_2_title", "label": "Feature 2 Title", "default": "LIMITED TIME" },
+        { "type": "text", "id": "feature_2_desc", "label": "Feature 2 Description", "default": "Grab them before they're gone forever." },
+        { "type": "text", "id": "feature_3_title", "label": "Feature 3 Title", "default": "PREMIUM QUALITY" },
+        { "type": "text", "id": "feature_3_desc", "label": "Feature 3 Description", "default": "Top-tier materials for ultimate comfort & style." },
+        { "type": "text", "id": "feature_4_title", "label": "Feature 4 Title", "default": "SPECIAL BONUS" },
+        { "type": "text", "id": "feature_4_desc", "label": "Feature 4 Description", "default": "Each order comes with exclusive in-game rewards." },
+        { "type": "header", "content": "Shop Button" },
+        { "type": "text", "id": "shop_text", "label": "Button Text", "default": "SHOP NOW" },
+        { "type": "url", "id": "shop_link", "label": "Button Link" },
+        { "type": "header", "content": "Product Carousel" },
+        { "type": "text", "id": "carousel_title", "label": "Carousel Title", "default": "THE COLLECTION" },
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "range", "id": "products_limit", "label": "Products to Show", "min": 4, "max": 24, "step": 2, "default": 8 },
+        { "type": "header", "content": "Bottom Feature Bar" },
+        { "type": "text", "id": "bottom_feat_1_title", "label": "Feature 1 Title", "default": "WORLDWIDE SHIPPING" },
+        { "type": "text", "id": "bottom_feat_1_desc", "label": "Feature 1 Description", "default": "Fast & Secure Delivery" },
+        { "type": "text", "id": "bottom_feat_2_title", "label": "Feature 2 Title", "default": "100% SECURE PAYMENT" },
+        { "type": "text", "id": "bottom_feat_2_desc", "label": "Feature 2 Description", "default": "Safe Checkout Guaranteed" },
+        { "type": "text", "id": "bottom_feat_3_title", "label": "Feature 3 Title", "default": "EASY RETURNS" },
+        { "type": "text", "id": "bottom_feat_3_desc", "label": "Feature 3 Description", "default": "30-Day Return Policy" },
+        { "type": "text", "id": "bottom_feat_4_title", "label": "Feature 4 Title", "default": "24/7 SUPPORT" },
+        { "type": "text", "id": "bottom_feat_4_desc", "label": "Feature 4 Description", "default": "We're Here To Help" },
+        { "type": "header", "content": "Brand Badge" },
+        { "type": "text", "id": "brand_badge", "label": "Brand Name", "default": "BOOYAH!" },
+        { "type": "text", "id": "brand_sub", "label": "Brand Subtext", "default": "BE THE LEGEND" },
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "primary_color", "label": "Primary Color", "default": "#FFC72C" },
+        { "type": "color", "id": "accent_color", "label": "Accent Color", "default": "#FF7A00" },
+        { "type": "header", "content": "Effects" },
+        { "type": "checkbox", "id": "enable_fire_effect", "label": "Enable Fire Spark Animation", "default": true }
       ]
     }
   ],
