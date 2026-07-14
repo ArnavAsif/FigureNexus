@@ -15,6 +15,50 @@
   {%- assign char_url = section.settings.center_character | image_url: width: 1200 -%}
 {%- endif -%}
 
+{%- if request.page_type == 'index' -%}
+<style id="nexus-lock-homepage">
+  html, body {
+    overflow: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    position: fixed !important;
+    width: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  html::-webkit-scrollbar, body::-webkit-scrollbar,
+  html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-track {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  .shopify-section {
+    overflow: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+  }
+  .shopify-section-group-header-group,
+  .shopify-section-group-footer-group,
+  .header-group, .footer-group {
+    display: none !important;
+  }
+  .skip-to-content-link,
+  #web-pixels-manager-sandbox-container {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+    pointer-events: none !important;
+    z-index: -99999 !important;
+  }
+</style>
+{%- endif -%}
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
@@ -146,6 +190,14 @@
     display: flex; justify-content: space-between; align-items: center;
     z-index: 1000; color: #fff;
     background: transparent;
+    transition: background 0.35s ease, backdrop-filter 0.35s ease, box-shadow 0.35s ease, padding 0.35s ease;
+  }
+  .nexus-nav.scrolled {
+    background: rgba(5, 6, 8, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    padding: 14px 4%;
   }
   .nexus-nav__left { display: flex; align-items: center; gap: 20px; }
   .nexus-nav__brand {
@@ -153,11 +205,21 @@
     text-decoration: none; color: #fff;
   }
   .nexus-nav__logo {
-    width: 36px; height: 36px; background: var(--nx-purple); border-radius: 50%;
+    width: var(--nx-logo-size, 36px); height: auto;
+    background: var(--nx-purple); border-radius: 50%;
     display: flex; justify-content: center; align-items: center;
     box-shadow: 0 0 15px var(--nx-purple);
+    overflow: hidden; flex-shrink: 0;
   }
   .nexus-nav__logo svg { width: 18px; height: 18px; fill: #fff; }
+  .nexus-nav__logo img {
+    width: 100%; height: 100%; object-fit: contain;
+    border-radius: inherit;
+  }
+  .nexus-nav__logo--full {
+    border-radius: var(--nx-logo-radius, 8px);
+    background: transparent; box-shadow: none;
+  }
   .nexus-nav__brand-text {
     font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 900;
     letter-spacing: 2px; line-height: 1.1;
@@ -184,15 +246,21 @@
 
   /* ======== BACK BUTTON ======== */
   .nexus-nav__back {
-    display: none; align-items: center; gap: 8px; color: #fff; text-decoration: none;
+    display: none; visibility: hidden; width: 0; height: 0; overflow: hidden;
+    align-items: center; gap: 8px; color: #fff; text-decoration: none;
     font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
     padding: 8px 16px; border: 1px solid rgba(255,255,255,0.2);
     background: rgba(10,6,20,0.8); backdrop-filter: blur(10px);
     cursor: pointer; transition: all 0.3s; border-radius: 6px;
+    opacity: 0; pointer-events: none; position: absolute; left: -9999px;
   }
   .nexus-nav__back:hover { border-color: var(--nx-primary); box-shadow: 0 0 15px rgba(255,122,0,0.4); }
   .nexus-nav__back svg { width: 14px; height: 14px; fill: currentColor; }
-  .nexus-lobby.view-active .nexus-nav__back { display: flex; }
+  .nexus-lobby.view-active .nexus-nav__back {
+    display: flex; visibility: visible; width: auto; height: auto;
+    overflow: visible; opacity: 1; pointer-events: auto;
+    position: relative; left: auto;
+  }
 
   /* ======== VIEWS ======== */
   .nexus-view {
@@ -212,7 +280,7 @@
   .nexus-lobby__character {
     position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
     height: 100vh; max-height: 850px; z-index: 12; pointer-events: none;
-    animation: characterBreath 4s ease-in-out infinite;
+    animation: characterBreath 4s ease-in-out infinite; overflow: hidden;
   }
   .nexus-lobby__character img {
     height: 100%; width: auto; object-fit: contain;
@@ -1107,7 +1175,7 @@
     /* Nav */
     .nexus-nav { padding: 14px 4%; }
     .nexus-nav__left { gap: 12px; }
-    .nexus-nav__logo { width: 32px; height: 32px; }
+    .nexus-nav__logo { width: var(--nx-logo-size-mb, 32px); }
     .nexus-nav__logo svg { width: 16px; height: 16px; }
     .nexus-nav__brand-text { font-size: 0.85rem; letter-spacing: 1.5px; }
     .nexus-nav__right { gap: 10px; }
@@ -1497,8 +1565,18 @@
   }
 
   /* Storefront view for collections */
-  .nexus-coll-storeview { display: none; }
+  .nexus-coll-storeview { display: none; position: relative; }
   .nexus-coll-storeview.active { display: block; }
+  .nexus-coll-storeview-bg {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center; z-index: 0;
+    pointer-events: none;
+  }
+  .nexus-coll-storeview-bg::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, var(--nx-bg-dark) 0%, transparent 15%, transparent 85%, var(--nx-bg-dark) 100%);
+  }
+  .nexus-coll-storeview > *:not(.nexus-coll-storeview-bg) { position: relative; z-index: 1; }
   .nexus-coll-back {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 10px 20px; border: 1px solid rgba(255,255,255,0.15);
@@ -1533,11 +1611,7 @@
   }
 </style>
 
-<!--
-  =========================================
-       HTML
-  =========================================
--->
+
 <div class="nexus-lobby" id="nexus-{{ nexus_id }}">
   <!-- LOADING -->
   <div class="nexus-loader" id="nexus-loader-{{ nexus_id }}">
@@ -1570,12 +1644,12 @@
         BACK
       </button>
       <a href="/" class="nexus-nav__brand">
-        <div class="nexus-nav__logo">
+        <div class="nexus-nav__logo{% if section.settings.logo_full %} nexus-nav__logo--full{% endif %}"
+             style="--nx-logo-size: {{ section.settings.logo_size_pc | default: 36 }}px; --nx-logo-size-mb: {{ section.settings.logo_size_mb | default: 32 }}px; --nx-logo-radius: {{ section.settings.logo_border_radius | default: 8 }}px;">
           {%- if section.settings.logo != blank -%}
             <img
-              src="{{ section.settings.logo | image_url: width: 80 }}"
+              src="{{ section.settings.logo | image_url: width: 200 }}"
               alt="Logo"
-              style="width:100%;height:100%;object-fit:contain;border-radius:50%;"
             >
           {%- else -%}
             <svg viewBox="0 0 24 24">
@@ -1583,7 +1657,7 @@
             </svg>
           {%- endif -%}
         </div>
-        <span class="nexus-nav__brand-text">{{ section.settings.brand_name | default: 'FIGURE<br>NEXUS' }}</span>
+        <span class="nexus-nav__brand-text">{{ section.settings.brand_name  }}</span>
       </a>
     </div>
     <div class="nexus-nav__right">
@@ -1608,7 +1682,7 @@
   </nav>
 
   <!-- LOBBY VIEW -->
-  <div class="nexus-view active" id="nexus-view-lobby-{{ nexus_id }}" data-view="lobby">
+  <div class="nexus-view" id="nexus-view-lobby-{{ nexus_id }}" data-view="lobby">
     {%- if section.settings.bg_video != blank -%}
       <div class="nexus-bg-wrap">
         <video autoplay muted loop playsinline><source src="{{ section.settings.bg_video }}" type="video/mp4"></video>
@@ -2479,6 +2553,10 @@
 
             <!-- STOREFRONT VIEW (hidden by default) -->
             <div class="nexus-coll-storeview" id="nexus-coll-storeview-{{ block.id }}">
+              {%- assign coll_section_bg = block.settings.section_bg -%}
+              {%- if coll_section_bg != blank -%}
+                <div class="nexus-coll-storeview-bg" style="background-image: url('{{ coll_section_bg | image_url: width: 1920 }}'); opacity: {{ block.settings.section_bg_opacity | default: 15 | times: 1.0 | divided_by: 100 }};"></div>
+              {%- endif -%}
               <button class="nexus-coll-back" id="nexus-coll-back-{{ block.id }}">
                 <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
                 BACK TO COLLECTIONS
@@ -3012,6 +3090,7 @@
               </div>
 
               <div class="fn-container">
+                {%- if block.settings.enable_filters -%}
                 <button
                   class="fn-mobile-filter-btn"
                   onclick="document.getElementById('fn-sidebar-{{ block.id }}').classList.toggle('open')"
@@ -3119,6 +3198,7 @@
                     {% endif %}
                   </form>
                 </aside>
+                {%- endif -%}
 
                 <!-- MAIN AREA -->
                 <main class="fn-main">
@@ -3683,14 +3763,18 @@
     });
     var skipLink = document.querySelector('.skip-to-content-link');
     if (skipLink) skipLink.remove();
-    document.documentElement.style.overflow = 'hidden';
-    document.documentElement.style.height = '100vh';
-    document.body.style.overflow = 'hidden';
-    document.body.style.height = '100vh';
-    ['scroll', 'wheel', 'touchmove', 'mousewheel'].forEach(function (evt) {
+
+    ['scroll', 'wheel', 'touchmove', 'mousewheel', 'keydown'].forEach(function (evt) {
       window.addEventListener(
         evt,
         function (e) {
+          if (evt === 'keydown') {
+            var blocked = [32, 33, 34, 35, 36, 38, 40];
+            if (blocked.indexOf(e.keyCode) !== -1) {
+              e.preventDefault();
+            }
+            return;
+          }
           e.preventDefault();
         },
         { passive: false }
@@ -4172,7 +4256,26 @@
       });
     });
 
+    /* ===== NAVBAR SCROLL ===== */
+    var nexusNav = document.getElementById('nexus-nav-' + id);
+    if (nexusNav) {
+      function checkNavScroll() {
+        var activeView = document.querySelector('.nexus-view.active');
+        var scrollPos = activeView ? activeView.scrollTop : window.scrollY;
+        if (scrollPos > 50) {
+          nexusNav.classList.add('scrolled');
+        } else {
+          nexusNav.classList.remove('scrolled');
+        }
+      }
+      document.querySelectorAll('.nexus-view').forEach(function (view) {
+        view.addEventListener('scroll', checkNavScroll, { passive: true });
+      });
+      window.addEventListener('scroll', checkNavScroll, { passive: true });
+    }
+
     /* ===== INIT ===== */
+    if (lobbyView) lobbyView.classList.add('active');
     window.NexusCart = NexusCart;
     NexusLoader.init();
     NexusCart.init();
@@ -4188,8 +4291,12 @@
   "settings": [
     { "type": "color", "id": "primary_color", "label": "Primary Color", "default": "#FFC72C" },
     { "type": "color", "id": "accent_color", "label": "Accent Color", "default": "#FF7A00" },
-    { "type": "text", "id": "brand_name", "label": "Brand Name", "default": "FIGURE<br>NEXUS" },
+    { "type": "text", "id": "brand_name", "label": "Brand Name" },
     { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "checkbox", "id": "logo_full", "label": "Full Logo (non-circular)", "default": false },
+    { "type": "range", "id": "logo_size_pc", "label": "Logo Size (Desktop)", "min": 20, "max": 200, "step": 2, "unit": "px", "default": 120 },
+    { "type": "range", "id": "logo_size_mb", "label": "Logo Size (Mobile)", "min": 16, "max": 200, "step": 2, "unit": "px", "default": 80 },
+    { "type": "range", "id": "logo_border_radius", "label": "Logo Border Radius", "min": 0, "max": 50, "step": 1, "unit": "px", "default": 8 },
     { "type": "text", "id": "currency_amount", "label": "Currency Amount", "default": "4,250" },
     { "type": "text", "id": "loading_title", "label": "Loading Title", "default": "LOADING" },
     { "type": "text", "id": "loading_subtitle", "label": "Loading Subtitle", "default": "ENTERING THE BATTLEFIELD" },
@@ -4284,6 +4391,18 @@
         },
         { "type": "text", "id": "view_title", "label": "View Title", "default": "OUR COLLECTIONS" },
         { "type": "text", "id": "view_subtitle", "label": "View Subtitle", "default": "BROWSE ALL COLLECTIONS" },
+        { "type": "header", "content": "Section Background" },
+        { "type": "image_picker", "id": "section_bg", "label": "Full Section Background Image" },
+        {
+          "type": "range",
+          "id": "section_bg_opacity",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Background Image Opacity",
+          "default": 15
+        },
         { "type": "collection", "id": "sf_collection", "label": "Fallback Collection" },
         {
           "type": "range",
@@ -4522,6 +4641,7 @@
           "default": 16
         },
         { "type": "header", "content": "Effects" },
+        { "type": "checkbox", "id": "enable_filters", "label": "Enable Filters", "default": true },
         { "type": "checkbox", "id": "enable_fire_effect", "label": "Enable Fire Spark Animation", "default": true },
         { "type": "checkbox", "id": "enable_sound_effects", "label": "Enable UI Sound Effects", "default": true }
       ]
