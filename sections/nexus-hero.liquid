@@ -1562,7 +1562,7 @@
                   </div>
                 {%- endif -%}
                 <div class="ab-who__content">
-                  <h3>{{ block.settings.who_heading | default: 'WHO WE ARE' | replace: ' ', '<br>' }}</h3>
+                  <h3>{{ block.settings.who_heading }}</h3>
                   <p>{{ block.settings.who_desc | default: "We are a team of passionate gamers and creators who understand the Free Fire universe inside out. Every product we craft is inspired by the game, built for quality, and inspired by the spirit of Booyah!" }}</p>
                   <div class="ab-stats">
                     {%- for i in (1..4) -%}
@@ -1585,55 +1585,68 @@
                 </div>
               </div>
 
-              <!-- WHY CHOOSE -->
-              <div class="ab-why">
-                <h3 class="ab-why__title">{{ block.settings.why_title | default: 'WHY CHOOSE <span>BOOYAH!</span> MERCHANT?' }}</h3>
-                <div class="ab-why__grid">
-                  {%- for i in (1..6) -%}
-                    {%- assign wt = 'why_' | append: i | append: '_title' -%}
-                    {%- assign wd = 'why_' | append: i | append: '_desc' -%}
-                    {%- assign wi = 'why_' | append: i | append: '_icon' -%}
-                    {%- if block.settings[wt] != blank -%}
-                      <div class="ab-why-card">
-                        <div class="ab-why-card__icon">
-                          {%- if block.settings[wi] != blank -%}
-                            <img src="{{ block.settings[wi] | image_url: width: 60 }}" alt="">
-                          {%- else -%}
-                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                          {%- endif -%}
-                        </div>
-                        <h4>{{ block.settings[wt] }}</h4>
-                        <p>{{ block.settings[wd] }}</p>
-                      </div>
-                    {%- endif -%}
-                  {%- endfor -%}
-                </div>
-              </div>
-
-              <!-- BANNER -->
-              <div class="ab-banner">
-                {%- if block.settings.banner_bg != blank -%}
-                  <div class="ab-banner__bg" style="background-image:url('{{ block.settings.banner_bg | image_url: width: 1920 }}');"></div>
+              <!-- WHY CHOOSE + BANNER (shared background) -->
+              <div class="ab-why-section">
+                {%- if block.settings.why_banner_bg != blank -%}
+                  <div class="ab-why-section__bg" style="background-image:url('{{ block.settings.why_banner_bg | image_url: width: 1920 }}');"></div>
                 {%- endif -%}
-                {%- if block.settings.banner_char_left != blank or block.settings.banner_char_right != blank -%}
-                  <div class="ab-banner__characters">
-                    {%- if block.settings.banner_char_left != blank -%}
-                      <img src="{{ block.settings.banner_char_left | image_url: width: 600 }}" alt="">
-                    {%- endif -%}
-                    {%- if block.settings.banner_char_right != blank -%}
-                      <img src="{{ block.settings.banner_char_right | image_url: width: 600 }}" alt="">
+
+                <div class="ab-why">
+                  <h3 class="ab-why__title">{{ block.settings.why_title | default: 'WHY CHOOSE <span>BOOYAH!</span> MERCHANT?' }}</h3>
+                  <div class="ab-why__grid">
+                    {%- for i in (1..6) -%}
+                      {%- assign wt = 'why_' | append: i | append: '_title' -%}
+                      {%- assign wd = 'why_' | append: i | append: '_desc' -%}
+                      {%- assign wi = 'why_' | append: i | append: '_icon' -%}
+                      {%- assign wimg = 'why_' | append: i | append: '_image' -%}
+                      {%- if block.settings[wt] != blank -%}
+                        <div class="ab-why-card">
+                          {%- if block.settings[wimg] != blank -%}
+                            <div class="ab-why-card__img">
+                              <img src="{{ block.settings[wimg] | image_url: width: 400 }}" alt="">
+                              {%- if block.settings[wi] != blank -%}
+                                <div class="ab-why-card__icon-badge">
+                                  <img src="{{ block.settings[wi] | image_url: width: 60 }}" alt="">
+                                </div>
+                              {%- else -%}
+                                <div class="ab-why-card__icon-badge">
+                                  <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                </div>
+                              {%- endif -%}
+                            </div>
+                          {%- endif -%}
+                          <div class="ab-why-card__content">
+                            <h4>{{ block.settings[wt] }}</h4>
+                            <p>{{ block.settings[wd] }}</p>
+                          </div>
+                        </div>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                </div>
+
+                <!-- BANNER -->
+                <div class="ab-banner">
+                  {%- if block.settings.banner_char_left != blank or block.settings.banner_char_right != blank -%}
+                    <div class="ab-banner__characters">
+                      {%- if block.settings.banner_char_left != blank -%}
+                        <img src="{{ block.settings.banner_char_left | image_url: width: 600 }}" alt="">
+                      {%- endif -%}
+                      {%- if block.settings.banner_char_right != blank -%}
+                        <img src="{{ block.settings.banner_char_right | image_url: width: 600 }}" alt="">
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                  <div class="ab-banner__content">
+                    <h3>{{ block.settings.banner_tag | default: "WE DON'T JUST FOLLOW THE GAME." }}</h3>
+                    <h2>{{ block.settings.banner_heading }} <br> <span>{{ block.settings.banner_accent | default: 'BOOYAH!' }}</span></h2>
+                    {%- if block.settings.banner_cta_link != blank -%}
+                      <a href="{{ block.settings.banner_cta_link }}" class="ab-banner__cta">
+                        {{ block.settings.banner_cta_text | default: 'SHOP LIMITED EDITIONS' }}
+                        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.59 5.59L12 20l8-8z"/></svg>
+                      </a>
                     {%- endif -%}
                   </div>
-                {%- endif -%}
-                <div class="ab-banner__content">
-                  <h3>{{ block.settings.banner_tag | default: "WE DON'T JUST FOLLOW THE GAME." }}</h3>
-                  <h2>{{ block.settings.banner_heading | default: 'WE ARE THE GAME.' | replace: ' ', '<br>' }} <span>{{ block.settings.banner_accent | default: 'BOOYAH!' }}</span></h2>
-                  {%- if block.settings.banner_cta_link != blank -%}
-                    <a href="{{ block.settings.banner_cta_link }}" class="ab-banner__cta">
-                      {{ block.settings.banner_cta_text | default: 'SHOP LIMITED EDITIONS' }}
-                      <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.59 5.59L12 20l8-8z"/></svg>
-                    </a>
-                  {%- endif -%}
                 </div>
               </div>
 
@@ -3465,7 +3478,7 @@
 
         { "type": "header", "content": "Who We Are" },
         { "type": "image_picker", "id": "who_image", "label": "Image" },
-        { "type": "text", "id": "who_heading", "label": "Heading", "default": "WHO WE ARE" },
+        { "type": "text", "id": "who_heading", "label": "Heading"},
         { "type": "textarea", "id": "who_desc", "label": "Description", "default": "We are a team of passionate gamers and creators who understand the Free Fire universe inside out. Every product we craft is inspired by the game, built for quality, and inspired by the spirit of Booyah!" },
         { "type": "text", "id": "stat_1_num", "label": "Stat 1 Number", "default": "5K+" },
         { "type": "text", "id": "stat_1_label", "label": "Stat 1 Label", "default": "HAPPY CUSTOMERS" },
@@ -3478,33 +3491,41 @@
         { "type": "text", "id": "who_cta_text", "label": "CTA Button Text", "default": "JOIN OUR JOURNEY" },
         { "type": "url", "id": "who_cta_link", "label": "CTA Button Link" },
 
+        { "type": "header", "content": "Why Choose + Banner Background" },
+        { "type": "image_picker", "id": "why_banner_bg", "label": "Shared Background (Why Choose + Banner)" },
+
         { "type": "header", "content": "Why Choose Section" },
         { "type": "text", "id": "why_title", "label": "Section Title", "default": "WHY CHOOSE <span>BOOYAH!</span> MERCHANT?" },
         { "type": "text", "id": "why_1_title", "label": "Card 1 Title", "default": "EXCLUSIVE MERCH" },
         { "type": "text", "id": "why_1_desc", "label": "Card 1 Desc", "default": "Official-inspired designs you can't find anywhere else." },
-        { "type": "image_picker", "id": "why_1_icon", "label": "Card 1 Icon" },
+        { "type": "image_picker", "id": "why_1_image", "label": "Card 1 Product Image" },
+        { "type": "image_picker", "id": "why_1_icon", "label": "Card 1 Icon Badge" },
         { "type": "text", "id": "why_2_title", "label": "Card 2 Title", "default": "PREMIUM MATERIALS" },
         { "type": "text", "id": "why_2_desc", "label": "Card 2 Desc", "default": "Comfortable, durable, and made to last." },
-        { "type": "image_picker", "id": "why_2_icon", "label": "Card 2 Icon" },
+        { "type": "image_picker", "id": "why_2_image", "label": "Card 2 Product Image" },
+        { "type": "image_picker", "id": "why_2_icon", "label": "Card 2 Icon Badge" },
         { "type": "text", "id": "why_3_title", "label": "Card 3 Title", "default": "LIMITED EDITIONS" },
         { "type": "text", "id": "why_3_desc", "label": "Card 3 Desc", "default": "Rare drops and limited stock. Grab it before it's gone!" },
-        { "type": "image_picker", "id": "why_3_icon", "label": "Card 3 Icon" },
+        { "type": "image_picker", "id": "why_3_image", "label": "Card 3 Product Image" },
+        { "type": "image_picker", "id": "why_3_icon", "label": "Card 3 Icon Badge" },
         { "type": "text", "id": "why_4_title", "label": "Card 4 Title", "default": "WORLDWIDE SHIPPING" },
         { "type": "text", "id": "why_4_desc", "label": "Card 4 Desc", "default": "We deliver to your location, no matter where you are." },
-        { "type": "image_picker", "id": "why_4_icon", "label": "Card 4 Icon" },
+        { "type": "image_picker", "id": "why_4_image", "label": "Card 4 Product Image" },
+        { "type": "image_picker", "id": "why_4_icon", "label": "Card 4 Icon Badge" },
         { "type": "text", "id": "why_5_title", "label": "Card 5 Title", "default": "DEDICATED SUPPORT" },
         { "type": "text", "id": "why_5_desc", "label": "Card 5 Desc", "default": "Our squad is always ready to help you." },
-        { "type": "image_picker", "id": "why_5_icon", "label": "Card 5 Icon" },
+        { "type": "image_picker", "id": "why_5_image", "label": "Card 5 Product Image" },
+        { "type": "image_picker", "id": "why_5_icon", "label": "Card 5 Icon Badge" },
         { "type": "text", "id": "why_6_title", "label": "Card 6 Title", "default": "SECURE SHOPPING" },
         { "type": "text", "id": "why_6_desc", "label": "Card 6 Desc", "default": "Safe & secure payments for a smooth shopping experience." },
-        { "type": "image_picker", "id": "why_6_icon", "label": "Card 6 Icon" },
+        { "type": "image_picker", "id": "why_6_image", "label": "Card 6 Product Image" },
+        { "type": "image_picker", "id": "why_6_icon", "label": "Card 6 Icon Badge" },
 
         { "type": "header", "content": "Banner Section" },
-        { "type": "image_picker", "id": "banner_bg", "label": "Banner Background" },
         { "type": "image_picker", "id": "banner_char_left", "label": "Banner Character Left" },
         { "type": "image_picker", "id": "banner_char_right", "label": "Banner Character Right" },
         { "type": "text", "id": "banner_tag", "label": "Banner Tagline", "default": "WE DON'T JUST FOLLOW THE GAME." },
-        { "type": "text", "id": "banner_heading", "label": "Banner Heading", "default": "WE ARE THE GAME." },
+        { "type": "text", "id": "banner_heading", "label": "Banner Heading"},
         { "type": "text", "id": "banner_accent", "label": "Banner Accent Text", "default": "BOOYAH!" },
         { "type": "text", "id": "banner_cta_text", "label": "Banner CTA Text", "default": "SHOP LIMITED EDITIONS" },
         { "type": "url", "id": "banner_cta_link", "label": "Banner CTA Link" },
