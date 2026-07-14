@@ -1,0 +1,234 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "nexus_hero_qyHbEd": {
+      "type": "nexus-hero",
+      "blocks": {
+        "card_storefront_Je4KTe": {
+          "type": "card_storefront",
+          "settings": {
+            "title": "STORE",
+            "subtitle": "SHOP NOW",
+            "badge": "SHOP",
+            "card_image": "shopify://shop_images/Gaming_merchandise_showcase_ware__2K_202607111655.jpg",
+            "glow_color": "#ffb000",
+            "position": "left",
+            "view_title": "STORE",
+            "view_subtitle": "OUR STORE",
+            "sf_hero_image": "shopify://shop_images/8912a8052c3c736ac49e836a7947fd4f.png",
+            "sf_heading": "GEAR UP,",
+            "heading_accent": "BOOYAH!",
+            "sf_subtitle": "Explore our exclusive Free Fire inspired collection. Limited drops, legendary style!",
+            "section_bg": "shopify://shop_images/Futuristic_gaming_background_pro__2K_202607111516.jpg",
+            "section_bg_opacity": 15,
+            "sf_collection": "",
+            "sf_products_per_page": 16,
+            "enable_fire_effect": true,
+            "enable_sound_effects": true
+          }
+        },
+        "card_collections_2": {
+          "type": "card_collections",
+          "settings": {
+            "title": "COLLECTIONS",
+            "subtitle": "BROWSE ALL",
+            "badge": "BROWSE ALL",
+            "card_image": "shopify://shop_images/Six_warriors_inspired_by_Free_202607111655.jpg",
+            "glow_color": "#00b4d8",
+            "position": "left",
+            "view_title": "OUR COLLECTIONS",
+            "view_subtitle": "BROWSE ALL COLLECTIONS",
+            "sf_collection": "",
+            "sf_products_per_page": 16,
+            "enable_fire_effect": true,
+            "col_1_image": "shopify://shop_images/remove_text_and_buttons_2K_202607061058.jpg",
+            "col_1_title": "",
+            "col_1_subtitle": "",
+            "col_1": "all-products",
+            "col_1_hero_image": "shopify://shop_images/8912a8052c3c736ac49e836a7947fd4f.png",
+            "col_2_title": "",
+            "col_2_subtitle": "",
+            "col_2": "",
+            "col_3_title": "",
+            "col_3_subtitle": "",
+            "col_3": "",
+            "col_4_title": "",
+            "col_4_subtitle": "",
+            "col_4": "",
+            "col_5_title": "",
+            "col_5_subtitle": "",
+            "col_5": "",
+            "col_6_title": "",
+            "col_6_subtitle": "",
+            "col_6": "",
+            "col_7_title": "",
+            "col_7_subtitle": "",
+            "col_7": "",
+            "col_8_title": "",
+            "col_8_subtitle": "",
+            "col_8": "",
+            "col_9_title": "",
+            "col_9_subtitle": "",
+            "col_9": "",
+            "col_10_title": "",
+            "col_10_subtitle": "",
+            "col_10": "",
+            "col_11_title": "",
+            "col_11_subtitle": "",
+            "col_11": "",
+            "col_12_title": "",
+            "col_12_subtitle": "",
+            "col_12": ""
+          }
+        },
+        "card_story_4": {
+          "type": "card_story",
+          "settings": {
+            "title": "STORY",
+            "subtitle": "OUR JOURNEY",
+            "badge": "STORY",
+            "card_image": "shopify://shop_images/Survivor_overlooking_island_sunset_2K_202607111656.jpg",
+            "glow_color": "#e63946",
+            "position": "right",
+            "view_title": "OUR STORY",
+            "view_subtitle": "DISCOVER OUR JOURNEY",
+            "story_heading": "THE BEGINNING",
+            "story_body": "Figure Nexus was born from a passion for anime, culture, and the art of collectibles. What started as a small dream has grown into a community of true anime lovers worldwide."
+          }
+        },
+        "card_about_5": {
+          "type": "card_about",
+          "settings": {
+            "title": "ABOUT US",
+            "subtitle": "KNOW MORE",
+            "badge": "ABOUT US",
+            "card_image": "shopify://shop_images/Elite_warriors_overlooking_battl__2K_202607111658.jpg",
+            "glow_color": "#06d6a0",
+            "position": "right",
+            "view_title": "ABOUT US",
+            "view_subtitle": "KNOW MORE ABOUT US",
+            "about_heading": "WHO WE ARE",
+            "about_body": "We are a team of passionate anime enthusiasts dedicated to bringing you the highest quality figures, collectibles, and merchandise from your favorite series."
+          }
+        },
+        "card_products_6": {
+          "type": "card_collections",
+          "settings": {
+            "title": "LIMITED EDITION",
+            "subtitle": "EXCLUSIVE ITEMS",
+            "badge": "EXCLUSIVE",
+            "card_image": "shopify://shop_images/Legendary_weapon_skin_display_2K_202607111659.jpg",
+            "glow_color": "#9d4edd",
+            "position": "right",
+            "view_title": "LIMITED EDITION",
+            "view_subtitle": "EXCLUSIVE ITEMS",
+            "sf_collection": "",
+            "sf_products_per_page": 16,
+            "enable_fire_effect": true,
+            "col_1_title": "",
+            "col_1_subtitle": "",
+            "col_1": "",
+            "col_2_title": "",
+            "col_2_subtitle": "",
+            "col_2": "",
+            "col_3_title": "",
+            "col_3_subtitle": "",
+            "col_3": "",
+            "col_4_title": "",
+            "col_4_subtitle": "",
+            "col_4": "",
+            "col_5_title": "",
+            "col_5_subtitle": "",
+            "col_5": "",
+            "col_6_title": "",
+            "col_6_subtitle": "",
+            "col_6": "",
+            "col_7_title": "",
+            "col_7_subtitle": "",
+            "col_7": "",
+            "col_8_title": "",
+            "col_8_subtitle": "",
+            "col_8": "",
+            "col_9_title": "",
+            "col_9_subtitle": "",
+            "col_9": "",
+            "col_10_title": "",
+            "col_10_subtitle": "",
+            "col_10": "",
+            "col_11_title": "",
+            "col_11_subtitle": "",
+            "col_11": "",
+            "col_12_title": "",
+            "col_12_subtitle": "",
+            "col_12": ""
+          }
+        },
+        "card_storefront_bTcrBc": {
+          "type": "card_storefront",
+          "settings": {
+            "title": "NEW ARRIVALS",
+            "subtitle": "SHOP NOW",
+            "badge": "SHOP",
+            "card_image": "shopify://shop_images/Warrior_discovering_battle_royal__2K_202607111655.jpg",
+            "glow_color": "#ffb000",
+            "position": "left",
+            "view_title": "STORE",
+            "view_subtitle": "OUR STORE",
+            "sf_hero_image": "shopify://shop_images/8912a8052c3c736ac49e836a7947fd4f.png",
+            "sf_heading": "GEAR UP,",
+            "heading_accent": "BOOYAH!",
+            "sf_subtitle": "Explore our exclusive Free Fire inspired collection. Limited drops, legendary style!",
+            "section_bg": "shopify://shop_images/Futuristic_gaming_background_pro__2K_202607111516.jpg",
+            "section_bg_opacity": 15,
+            "sf_collection": "all-products",
+            "sf_products_per_page": 16,
+            "enable_fire_effect": true,
+            "enable_sound_effects": true
+          }
+        }
+      },
+      "block_order": [
+        "card_storefront_Je4KTe",
+        "card_collections_2",
+        "card_story_4",
+        "card_about_5",
+        "card_products_6",
+        "card_storefront_bTcrBc"
+      ],
+      "name": "NEXUS Lobby",
+      "settings": {
+        "primary_color": "#ffc72c",
+        "accent_color": "#ff7a00",
+        "brand_name": "FIGURENEXUS",
+        "currency_amount": "4,250",
+        "loading_title": "LOADING",
+        "loading_subtitle": "ENTERING THE BATTLEFIELD",
+        "loading_japanese": "ロード中...",
+        "loading_image": "shopify://shop_images/Remove_text_and_buttons_2K_202607071430.jpg",
+        "loading_video": "",
+        "bg_image": "shopify://shop_images/remove_the_center_charecter_2K_202607111532.jpg",
+        "bg_video": "",
+        "center_character": "shopify://shop_images/Center_character_and_background_2K_202607071145.png",
+        "tagline": "GEAR UP. SURVIVE. BOOYAH!",
+        "tagline_sub": "OFFICIAL FREE FIRE MERCH STORE",
+        "cta_text": "EXPLORE NOW",
+        "cta_link": "",
+        "social_facebook": "#",
+        "social_instagram": "#",
+        "social_youtube": "#",
+        "social_tiktok": "#"
+      }
+    }
+  },
+  "order": [
+    "nexus_hero_qyHbEd"
+  ]
+}

@@ -1,0 +1,25 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "nx-collection": {
+      "type": "nx-collection",
+      "settings": {
+        "hero_badge": "OUR COLLECTION",
+        "hero_title": "GEAR UP, <span>BOOYAH!</span>",
+        "hero_desc": "Explore our exclusive Free Fire inspired collection. Limited drops, legendary style!",
+        "products_per_page": 16
+      }
+    }
+  },
+  "order": [
+    "nx-collection"
+  ]
+}

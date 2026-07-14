@@ -1,0 +1,315 @@
+{%- comment -%}
+  Swipe Add to Cart — Premium Free Fire Style
+  Usage: render 'swipe-add-to-cart', variant_id: product.selected_or_first_available_variant.id
+{%- endcomment -%}
+
+{%- assign swipe_id = variant_id | default: 0 -%}
+
+<style>
+  @keyframes saPulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(255,106,0,0.5), 0 0 24px rgba(255,106,0,0.2); }
+    50% { box-shadow: 0 0 20px rgba(255,106,0,0.7), 0 0 36px rgba(255,106,0,0.3); }
+  }
+  @keyframes saShimmer {
+    0% { left: -100%; }
+    100% { left: 200%; }
+  }
+  @keyframes saParticle {
+    0% { transform: translateY(0) translateX(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-30px) translateX(var(--px, 10px)) scale(0); opacity: 0; }
+  }
+  @keyframes saFlash {
+    0% { opacity: 0; }
+    30% { opacity: 0.6; }
+    100% { opacity: 0; }
+  }
+  @keyframes saCheck {
+    0% { stroke-dashoffset: 24; }
+    100% { stroke-dashoffset: 0; }
+  }
+  @keyframes saConfetti {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-60px) rotate(720deg); opacity: 0; }
+  }
+  @keyframes saBounce {
+    0% { transform: scale(0.95); }
+    40% { transform: scale(1.04); }
+    70% { transform: scale(0.98); }
+    100% { transform: scale(1); }
+  }
+
+  .sa-wrap { position: relative; width: 100%; touch-action: pan-y; }
+
+  .sa-track {
+    position: relative; width: 100%; height: 64px;
+    background: #181818; border-radius: 999px;
+    border: 2px solid rgba(255,106,0,0.4);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 15px rgba(255,106,0,0.15);
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  .sa-wrap:hover .sa-track {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 25px rgba(255,106,0,0.3);
+    border-color: rgba(255,106,0,0.6);
+  }
+
+  .sa-fill {
+    position: absolute; top: 0; left: 0; height: 100%;
+    width: 0%; border-radius: 999px;
+    background: linear-gradient(90deg, rgba(255,106,0,0.15), rgba(255,140,0,0.3));
+    pointer-events: none;
+  }
+  .sa-streak {
+    position: absolute; top: 0; left: 0; height: 100%;
+    width: 60px; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255,140,0,0.5), transparent);
+    opacity: 0;
+  }
+  .sa-streak.on { opacity: 1; }
+
+  .sa-text {
+    position: absolute; inset: 0; display: flex;
+    align-items: center; justify-content: center;
+    font-family: 'Orbitron', 'Poppins', sans-serif;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    pointer-events: none; z-index: 1;
+    transition: color 0.3s;
+  }
+  .sa-wrap.active .sa-text { color: rgba(255,255,255,0.8); }
+  .sa-lbl { transition: opacity 0.25s; }
+
+  .sa-handle {
+    position: absolute; top: 6px; left: 6px;
+    width: 52px; height: 52px; z-index: 3;
+    cursor: grab; touch-action: none;
+  }
+  .sa-handle:active { cursor: grabbing; }
+  .sa-core {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #FF8C00, #FF5A00, #E04800);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid rgba(255,200,100,0.4);
+    box-shadow: 0 0 12px rgba(255,106,0,0.5), 0 0 24px rgba(255,106,0,0.2),
+                inset 0 1px 2px rgba(255,255,255,0.2);
+    animation: saPulse 2s ease-in-out infinite;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .sa-core::after {
+    content: ''; position: absolute; top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: saShimmer 2.5s ease-in-out infinite;
+  }
+  .sa-core svg { width: 18px; height: 18px; fill: #fff; position: relative; z-index: 1;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
+  .sa-wrap.active .sa-core {
+    transform: rotate(3deg) scale(1.08);
+    box-shadow: 0 0 24px rgba(255,106,0,0.7), 0 0 40px rgba(255,106,0,0.3),
+                inset 0 1px 3px rgba(255,255,255,0.3);
+    animation: none;
+  }
+
+  .sa-particle {
+    position: absolute; width: 4px; height: 4px;
+    background: #FF8C00; border-radius: 50%;
+    pointer-events: none; z-index: 4;
+    animation: saParticle 0.5s ease-out forwards;
+  }
+  .sa-flash {
+    position: absolute; inset: 0; border-radius: 999px; pointer-events: none; z-index: 5; opacity: 0;
+    background: radial-gradient(circle, rgba(255,106,0,0.6), transparent 70%);
+  }
+  .sa-flash.on { animation: saFlash 0.5s ease-out; }
+  .sa-confetti {
+    position: absolute; width: 5px; height: 5px;
+    border-radius: 1px; pointer-events: none; z-index: 6;
+    animation: saConfetti 0.8s ease-out forwards;
+  }
+
+  /* Completed state */
+  .sa-wrap.done .sa-track {
+    border-color: rgba(0,210,120,0.5);
+    animation: saBounce 0.5s ease;
+  }
+  .sa-wrap.done .sa-fill {
+    width: 100% !important;
+    background: linear-gradient(90deg, rgba(0,200,100,0.2), rgba(0,210,120,0.35));
+  }
+  .sa-wrap.done .sa-core {
+    background: linear-gradient(135deg, #00D278, #00B862);
+    border-color: rgba(100,255,180,0.4);
+    animation: none;
+    box-shadow: 0 0 20px rgba(0,210,120,0.5);
+  }
+  .sa-wrap.done .sa-core svg { display: none; }
+  .sa-check { display: none; position: relative; z-index: 1; }
+  .sa-wrap.done .sa-check { display: block; }
+  .sa-wrap.done .sa-check svg { width: 22px; height: 22px; }
+  .sa-wrap.done .sa-check path {
+    stroke: #fff; stroke-width: 3; fill: none;
+    stroke-dasharray: 24; stroke-dashoffset: 0;
+    animation: saCheck 0.4s ease forwards;
+  }
+
+  .sa-goto {
+    position: absolute; inset: 0; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #FF8C00, #FF5A00);
+    font-family: 'Orbitron', 'Poppins', sans-serif;
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: #fff; cursor: pointer; z-index: 10;
+    opacity: 0; transform: scale(0.95);
+    transition: opacity 0.4s, transform 0.4s, box-shadow 0.3s;
+    text-decoration: none; pointer-events: none;
+    box-shadow: 0 4px 20px rgba(255,106,0,0.4);
+  }
+  .sa-goto.show { opacity: 1; transform: scale(1); pointer-events: auto; }
+  .sa-goto:hover { box-shadow: 0 8px 30px rgba(255,106,0,0.6); }
+</style>
+
+<div class="sa-wrap" id="sa-{{ swipe_id }}">
+  <div class="sa-track">
+    <div class="sa-fill"></div>
+    <div class="sa-streak"></div>
+  </div>
+  <div class="sa-text">
+    <span class="sa-lbl sa-lbl-1">&#9654; SWIPE TO DEPLOY</span>
+    <span class="sa-lbl sa-lbl-2" style="display:none;">ADDING TO INVENTORY...</span>
+    <span class="sa-lbl sa-lbl-3" style="display:none;">ITEM UNLOCKED</span>
+  </div>
+  <div class="sa-handle">
+    <div class="sa-core">
+      <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+    </div>
+  </div>
+  <div class="sa-flash"></div>
+  <a href="/cart" class="sa-goto" id="sa-goto-{{ swipe_id }}">&#10003; GO TO CART</a>
+</div>
+
+<script>
+(function(){
+  var VID = {{ swipe_id }};
+  var wrap = document.getElementById('sa-' + VID);
+  if (!wrap) return;
+  var track = wrap.querySelector('.sa-track');
+  var handle = wrap.querySelector('.sa-handle');
+  var fill = wrap.querySelector('.sa-fill');
+  var streak = wrap.querySelector('.sa-streak');
+  var flash = wrap.querySelector('.sa-flash');
+  var gotoBtn = document.getElementById('sa-goto-' + VID);
+  var l1 = wrap.querySelector('.sa-lbl-1');
+  var l2 = wrap.querySelector('.sa-lbl-2');
+  var l3 = wrap.querySelector('.sa-lbl-3');
+
+  var dragging = false, startX = 0, posX = 0, maxDrag = 0, done = false;
+
+  functiongetX(e) {
+    return e.touches ? e.touches[0].clientX : e.clientX;
+  }
+
+  function onStart(e) {
+    if (done) return;
+    dragging = true;
+    startX = getX(e);
+    maxDrag = track.offsetWidth - 64;
+    wrap.classList.add('active');
+    handle.setPointerCapture(e.pointerId);
+  }
+
+  function onMove(e) {
+    if (!dragging || done) return;
+    e.preventDefault();
+    var dx = getX(e) - startX;
+    posX = Math.max(0, Math.min(dx, maxDrag));
+    var pct = (posX / maxDrag) * 100;
+
+    handle.style.transform = 'translateX(' + posX + 'px)';
+    fill.style.width = pct + '%';
+    streak.style.transform = 'translateX(' + (posX - 30) + 'px)';
+    streak.classList.toggle('on', pct > 5);
+
+    if (pct < 40) {
+      l1.style.display = ''; l2.style.display = 'none'; l3.style.display = 'none';
+    } else {
+      l1.style.display = 'none'; l2.style.display = ''; l3.style.display = 'none';
+    }
+
+    if (Math.random() < 0.35) {
+      var p = document.createElement('div');
+      p.className = 'sa-particle';
+      p.style.left = (posX + 26) + 'px';
+      p.style.top = '32px';
+      p.style.setProperty('--px', (Math.random() * 20 - 10) + 'px');
+      wrap.appendChild(p);
+      setTimeout(function(){ p.remove(); }, 500);
+    }
+  }
+
+  function onEnd() {
+    if (!dragging || done) return;
+    dragging = false;
+    wrap.classList.remove('active');
+    var pct = (posX / maxDrag) * 100;
+
+    if (pct >= 85) {
+      complete();
+    } else {
+      handle.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      fill.style.transition = 'width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      handle.style.transform = 'translateX(0)';
+      fill.style.width = '0%';
+      streak.classList.remove('on');
+      l1.style.display = ''; l2.style.display = 'none'; l3.style.display = 'none';
+      setTimeout(function(){
+        handle.style.transition = '';
+        fill.style.transition = '';
+      }, 500);
+    }
+    posX = 0;
+  }
+
+  function complete() {
+    done = true;
+    dragging = false;
+    wrap.classList.add('done');
+
+    flash.classList.add('on');
+    setTimeout(function(){ flash.classList.remove('on'); }, 500);
+
+    var colors = ['#FF6A00','#FF8C00','#FFD54A','#FF5A00','#FFAA33'];
+    for (var i = 0; i < 14; i++) {
+      var c = document.createElement('div');
+      c.className = 'sa-confetti';
+      c.style.left = (track.offsetWidth / 2 + (Math.random() * 40 - 20)) + 'px';
+      c.style.top = '32px';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDuration = (0.5 + Math.random() * 0.5) + 's';
+      var angle = (Math.random() * 120 - 60) * Math.PI / 180;
+      var dist = 40 + Math.random() * 40;
+      c.style.setProperty('--px', Math.cos(angle) * dist + 'px');
+      wrap.appendChild(c);
+      (function(el){ setTimeout(function(){ el.remove(); }, 1000); })(c);
+    }
+
+    l1.style.display = 'none'; l2.style.display = 'none'; l3.style.display = '';
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: [{ id: VID, quantity: 1 }] })
+    }).then(function(r){ return r.json(); }).catch(function(){});
+
+    setTimeout(function(){ gotoBtn.classList.add('show'); }, 1000);
+  }
+
+  handle.addEventListener('pointerdown', onStart);
+  wrap.addEventListener('pointermove', onMove);
+  wrap.addEventListener('pointerup', onEnd);
+  wrap.addEventListener('pointercancel', onEnd);
+})();
+</script>

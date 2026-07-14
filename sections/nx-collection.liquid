@@ -1,0 +1,523 @@
+{%- comment -%}
+  NX COLLECTION — Custom Dark Gaming Collection Page
+  Hero banner + sidebar filters + product grid
+{%- endcomment -%}
+
+{%- assign nx_id = section.id | replace: '_', '-' -%}
+{%- assign banner_bg = section.settings.banner_image | image_url: width: 1920 -%}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+  /* ======== BASE ======== */
+  .nx-col { position: relative; width: 100%; min-height: 100vh; background: #050608; font-family: 'Inter', sans-serif; color: #fff; }
+  .nx-col * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ======== HERO BANNER ======== */
+  .nx-col-hero { position: relative; width: 100%; height: 340px; display: flex; align-items: center; padding: 0 5%; border-radius: 0; overflow: hidden; }
+  .nx-col-hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5,6,8,0.95) 0%, rgba(5,6,8,0.6) 50%, rgba(5,6,8,0.2) 100%); z-index: 1; }
+  .nx-col-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; }
+  .nx-col-hero-shine { position: absolute; top: 0; left: -60%; width: 35%; height: 100%; background: linear-gradient(115deg, transparent, rgba(255,255,255,0.04), transparent); transform: skewX(-20deg); z-index: 2; animation: nxHeroShine 6s ease-in-out infinite; }
+  @keyframes nxHeroShine { 0%,100% { left: -60%; } 50% { left: 120%; } }
+  .nx-col-hero-content { position: relative; z-index: 3; max-width: 650px; }
+  .nx-col-hero-badge { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #FFC72C; color: #FFC72C; padding: 5px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; border-radius: 4px; box-shadow: 0 0 12px rgba(255,199,44,0.15); }
+  .nx-col-hero h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(1.8rem, 4vw, 3.2rem); font-weight: 900; line-height: 1.05; text-transform: uppercase; margin-bottom: 12px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+  .nx-col-hero h1 span { color: #FFC72C; }
+  .nx-col-hero-desc { color: #bbb; font-size: 15px; line-height: 1.6; margin-bottom: 20px; max-width: 500px; }
+  .nx-col-breadcrumbs { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
+  .nx-col-breadcrumbs a { color: #888; text-decoration: none; transition: color 0.2s; }
+  .nx-col-breadcrumbs a:hover { color: #FFC72C; }
+  .nx-col-breadcrumbs svg { width: 12px; height: 12px; fill: #555; }
+  .nx-col-hero-bottom { position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #ff6a00, #FFC72C, #ff6a00, transparent); filter: blur(4px); z-index: 3; }
+
+  /* ======== LAYOUT ======== */
+  .nx-col-wrap { max-width: 1600px; margin: 0 auto; padding: 30px 20px 60px; display: flex; gap: 30px; }
+
+  /* ======== SIDEBAR ======== */
+  .nx-col-sidebar { width: 260px; flex-shrink: 0; }
+  .nx-col-sidebar-widget { background: #121826; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .nx-col-sidebar-title { font-size: 13px; color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .nx-col-cat-list { list-style: none; }
+  .nx-col-cat-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 13px; color: #aaa; font-weight: 500; }
+  .nx-col-cat-item:hover, .nx-col-cat-item.active { background: rgba(255,199,44,0.06); color: #FFC72C; }
+  .nx-col-cat-item.active { font-weight: 700; }
+  .nx-col-cat-icon { width: 16px; height: 16px; margin-right: 8px; fill: currentColor; opacity: 0.6; }
+  .nx-col-cat-count { font-size: 11px; color: #555; font-weight: 600; background: rgba(255,255,255,0.04); padding: 2px 8px; border-radius: 10px; }
+
+  /* Price Filter */
+  .nx-col-price-range { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .nx-col-price-input { flex: 1; background: #0a0d14; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 10px; color: #fff; font-size: 13px; font-family: 'Inter', sans-serif; text-align: center; outline: none; }
+  .nx-col-price-input:focus { border-color: #FFC72C; }
+  .nx-col-price-sep { color: #555; font-size: 12px; }
+  .nx-col-price-slider { width: 100%; height: 4px; -webkit-appearance: none; appearance: none; background: #1a1f2e; border-radius: 2px; outline: none; margin: 8px 0; }
+  .nx-col-price-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #FFC72C; cursor: pointer; box-shadow: 0 0 8px rgba(255,199,44,0.4); }
+  .nx-col-filter-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #FFC72C, #FF7A00); border: none; border-radius: 8px; color: #111; font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .nx-col-filter-btn:hover { box-shadow: 0 0 20px rgba(255,199,44,0.3); transform: translateY(-1px); }
+
+  /* Sort */
+  .nx-col-sort-select { width: 100%; background: #0a0d14; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px 12px; color: #fff; font-size: 13px; font-family: 'Inter', sans-serif; cursor: pointer; outline: none; }
+  .nx-col-sort-select:focus { border-color: #FFC72C; }
+  .nx-col-sort-select option { background: #121826; }
+
+  /* Color Swatches */
+  .nx-col-colors { display: flex; flex-wrap: wrap; gap: 10px; }
+  .nx-col-color-box { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #333; cursor: pointer; transition: all 0.2s; position: relative; }
+  .nx-col-color-box:hover, .nx-col-color-box.active { border-color: #FFC72C; box-shadow: 0 0 10px rgba(255,199,44,0.3); transform: scale(1.1); }
+
+  /* Size */
+  .nx-col-sizes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .nx-col-size-btn { border: 1px solid #333; background: transparent; color: #aaa; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+  .nx-col-size-btn:hover, .nx-col-size-btn.active { border-color: #FFC72C; color: #FFC72C; background: rgba(255,199,44,0.06); }
+
+  /* ======== MAIN CONTENT ======== */
+  .nx-col-main { flex-grow: 1; width: 100%; }
+
+  /* Toolbar */
+  .nx-col-toolbar { background: #121826; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .nx-col-toolbar-left { display: flex; align-items: center; gap: 16px; }
+  .nx-col-count { color: #888; font-size: 13px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+  .nx-col-toolbar-right { display: flex; align-items: center; gap: 12px; }
+  .nx-col-view-btn { width: 34px; height: 34px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: #888; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .nx-col-view-btn:hover, .nx-col-view-btn.active { border-color: #FFC72C; color: #FFC72C; background: rgba(255,199,44,0.06); }
+  .nx-col-view-btn svg { width: 16px; height: 16px; fill: currentColor; }
+  .nx-col-sort-toolbar { background: #0a0d14; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 8px 14px; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; outline: none; font-family: 'Inter', sans-serif; }
+  .nx-col-sort-toolbar option { background: #121826; }
+
+  /* Mobile Filter Toggle */
+  .nx-col-mobile-filter { display: none; background: #121826; border: 1px solid #FFC72C; color: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 16px; cursor: pointer; width: 100%; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; text-align: center; letter-spacing: 1px; }
+
+  /* ======== PRODUCT GRID ======== */
+  .nx-col-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+  /* ======== PRODUCT CARD ======== */
+  .nx-col-card { position: relative; background: #121826; border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; overflow: hidden; transition: all 0.35s cubic-bezier(0.22,0.9,0.32,1); cursor: pointer; }
+  .nx-col-card:hover { transform: translateY(-6px); border-color: rgba(255,199,44,0.3); box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 30px rgba(255,199,44,0.08); }
+  .nx-col-card-img-wrap { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: linear-gradient(135deg, #1a1d24, #0c0c0d); }
+  .nx-col-card-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease, filter 0.5s ease; }
+  .nx-col-card:hover .nx-col-card-img { transform: scale(1.06); filter: brightness(0.85) saturate(1.1); }
+  .nx-col-card-noimg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a1d24, #0c0c0d); }
+  .nx-col-card-noimg span { color: #444; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+  /* Badge */
+  .nx-col-badge { position: absolute; top: 12px; left: 0; font-size: 10px; font-weight: 700; padding: 4px 14px 4px 10px; text-transform: uppercase; letter-spacing: 0.5px; clip-path: polygon(0 0, 100% 0, 82% 100%, 0% 100%); z-index: 3; }
+  .nx-col-badge--new { background: #8000FF; color: #fff; }
+  .nx-col-badge--hot { background: #FF3333; color: #fff; }
+  .nx-col-badge--limited { background: #0055FF; color: #fff; }
+  .nx-col-badge--sale { background: #FF6600; color: #fff; }
+
+  /* Corners */
+  .nx-col-corner { position: absolute; width: 14px; height: 14px; border-color: rgba(255,255,255,0.12); transition: border-color 0.35s; z-index: 2; }
+  .nx-col-corner--tl { top: 8px; left: 8px; border-top: 2px solid; border-left: 2px solid; }
+  .nx-col-corner--br { bottom: 8px; right: 8px; border-bottom: 2px solid; border-right: 2px solid; }
+  .nx-col-card:hover .nx-col-corner { border-color: rgba(255,199,44,0.6); }
+
+  /* Scanline */
+  .nx-col-scanline { position: absolute; left: 0; top: -10%; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #FFC72C, transparent); opacity: 0; z-index: 2; pointer-events: none; }
+  .nx-col-card:hover .nx-col-scanline { animation: nxScan 1.4s linear infinite; }
+  @keyframes nxScan { 0% { top: -10%; } 100% { top: 110%; } }
+
+  /* Card Content */
+  .nx-col-card-body { padding: 14px 16px 16px; }
+  .nx-col-card-title { font-size: 14px; font-weight: 700; color: #f4f1ea; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.3px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
+  .nx-col-card-title a { color: inherit; text-decoration: none; }
+  .nx-col-card-title a:hover { color: #FFC72C; }
+  .nx-col-card-stars { color: #FFC72C; font-size: 11px; margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
+  .nx-col-card-stars span { color: #555; font-size: 11px; }
+  .nx-col-card-divider { height: 1px; width: 30%; background: rgba(255,255,255,0.06); margin-bottom: 12px; position: relative; overflow: hidden; }
+  .nx-col-card-divider::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: #FFC72C; transition: width 0.45s ease; }
+  .nx-col-card:hover .nx-col-card-divider::after { width: 100%; }
+
+  .nx-col-card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  .nx-col-price-wrap { display: flex; align-items: baseline; gap: 8px; }
+  .nx-col-price { font-size: 20px; font-weight: 800; color: #fff; font-family: 'Inter', sans-serif; }
+  .nx-col-compare { font-size: 13px; color: #555; text-decoration: line-through; }
+  .nx-col-card-cart { width: 40px; height: 40px; border: none; background: rgba(255,199,44,0.08); clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); color: #FFC72C; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.25s; flex-shrink: 0; }
+  .nx-col-card-cart:hover { background: #FFC72C; color: #111; transform: scale(1.1); }
+  .nx-col-card-cart svg { width: 16px; height: 16px; fill: currentColor; }
+
+  /* ======== PAGINATION ======== */
+  .nx-col-pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 40px; }
+  .nx-col-page { width: 36px; height: 36px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: #888; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; text-decoration: none; }
+  .nx-col-page:hover, .nx-col-page.active { border-color: #FFC72C; color: #FFC72C; background: rgba(255,199,44,0.06); }
+  .nx-col-page.disabled { opacity: 0.3; pointer-events: none; }
+
+  /* ======== TOAST ======== */
+  .nx-col-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(50px); background: #111; border: 1px solid #FFC72C; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; font-size: 13px; opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 10002; white-space: nowrap; }
+  .nx-col-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
+
+  /* ======== EMPTY STATE ======== */
+  .nx-col-empty { text-align: center; padding: 80px 20px; }
+  .nx-col-empty h3 { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: #FFC72C; margin-bottom: 12px; letter-spacing: 2px; }
+  .nx-col-empty p { color: #666; font-size: 14px; }
+
+  /* ======== RESPONSIVE ======== */
+  @media (max-width: 1200px) {
+    .nx-col-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 990px) {
+    .nx-col-wrap { flex-direction: column; }
+    .nx-col-sidebar { display: none; width: 100%; }
+    .nx-col-sidebar.open { display: block; position: fixed; top: 0; left: 0; width: 300px; height: 100%; background: #0a0d14; z-index: 999; padding: 20px; overflow-y: auto; border-right: 1px solid #FFC72C; }
+    .nx-col-mobile-filter { display: block; }
+    .nx-col-hero { height: 260px; }
+    .nx-col-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  }
+  @media (max-width: 768px) {
+    .nx-col-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .nx-col-hero { height: 220px; padding: 0 4%; }
+    .nx-col-hero h1 { font-size: 1.4rem; }
+    .nx-col-hero-desc { font-size: 13px; }
+    .nx-col-card-title { font-size: 13px; }
+    .nx-col-price { font-size: 17px; }
+    .nx-col-card-cart { width: 34px; height: 34px; }
+    .nx-col-card-body { padding: 10px 12px 12px; }
+    .nx-col-toolbar { flex-wrap: wrap; gap: 10px; }
+  }
+  @media (max-width: 480px) {
+    .nx-col-hero { height: 180px; }
+    .nx-col-hero h1 { font-size: 1.1rem; }
+    .nx-col-grid { gap: 10px; }
+    .nx-col-card-img-wrap { aspect-ratio: 3/4; }
+  }
+
+  /* Overlay for mobile sidebar */
+  .nx-col-sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 998; }
+  .nx-col-sidebar-overlay.open { display: block; }
+</style>
+
+<!-- HERO BANNER -->
+<div class="nx-col">
+  <div class="nx-col-hero">
+    {%- if banner_bg != blank -%}
+      <div class="nx-col-hero-bg" style="background-image: url('{{ banner_bg }}');"></div>
+    {%- else -%}
+      <div class="nx-col-hero-bg" style="background: linear-gradient(135deg, #0a0a0b 0%, #1a1020 50%, #0a0a0b 100%);"></div>
+    {%- endif -%}
+    <div class="nx-col-hero-shine"></div>
+    <div class="nx-col-hero-content">
+      {%- if section.settings.hero_badge != blank -%}
+        <div class="nx-col-hero-badge">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61z"/></svg>
+          {{ section.settings.hero_badge }}
+        </div>
+      {%- endif -%}
+      <h1>{{ section.settings.hero_title | default: 'GEAR UP, <span>BOOYAH!</span>' }}</h1>
+      {%- if section.settings.hero_desc != blank -%}
+        <p class="nx-col-hero-desc">{{ section.settings.hero_desc }}</p>
+      {%- endif -%}
+      <div class="nx-col-breadcrumbs">
+        <a href="/">HOME</a>
+        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        <span style="color: #FFC72C;">COLLECTIONS</span>
+      </div>
+    </div>
+    <div class="nx-col-hero-bottom"></div>
+  </div>
+
+  <!-- SIDEBAR OVERLAY -->
+  <div class="nx-col-sidebar-overlay" id="nx-sidebar-overlay-{{ nx_id }}" onclick="document.getElementById('nx-sidebar-{{ nx_id }}').classList.remove('open'); this.classList.remove('open');"></div>
+
+  <div class="nx-col-wrap">
+    <!-- SIDEBAR -->
+    <aside class="nx-col-sidebar" id="nx-sidebar-{{ nx_id }}">
+      <!-- Categories -->
+      <div class="nx-col-sidebar-widget">
+        <h3 class="nx-col-sidebar-title">Categories</h3>
+        <ul class="nx-col-cat-list">
+          <li class="nx-col-cat-item {% unless current_tags %}active{% endunless %}">
+            <a href="{{ collection.url }}" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:8px;">
+              <span>ALL PRODUCTS</span>
+            </a>
+            <span class="nx-col-cat-count">{{ collection.all_products_count }}</span>
+          </li>
+          {%- for tag in collection.all_tags -%}
+            {%- unless tag contains '_' -%}
+              <li class="nx-col-cat-item {% if current_tags contains tag %}active{% endif %}">
+                <a href="{{ collection.url }}/{{ tag | handleize }}" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:8px;">
+                  <span>{{ tag | upcase }}</span>
+                </a>
+              </li>
+            {%- endunless -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <!-- Filter by Price -->
+      <div class="nx-col-sidebar-widget">
+        <h3 class="nx-col-sidebar-title">Filter by Price</h3>
+        <form id="nx-price-form-{{ nx_id }}" onsubmit="return false;">
+          <div class="nx-col-price-range">
+            <input type="number" class="nx-col-price-input" placeholder="$10" min="0" id="nx-price-min-{{ nx_id }}">
+            <span class="nx-col-price-sep">—</span>
+            <input type="number" class="nx-col-price-input" placeholder="$100" min="0" id="nx-price-max-{{ nx_id }}">
+          </div>
+          <input type="range" class="nx-col-price-slider" min="0" max="500" value="500" id="nx-price-slider-{{ nx_id }}" oninput="document.getElementById('nx-price-max-{{ nx_id }}').value = this.value;">
+          <button type="submit" class="nx-col-filter-btn" onclick="nxFilterPrice('{{ nx_id }}', '{{ collection.url }}')">FILTER</button>
+        </form>
+      </div>
+
+      <!-- Sort By -->
+      <div class="nx-col-sidebar-widget">
+        <h3 class="nx-col-sidebar-title">Sort By</h3>
+        <select class="nx-col-sort-select" onchange="nxSortChange(this.value, '{{ collection.url }}')">
+          {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+          {%- for option in collection.sort_options -%}
+            <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>
+          {%- endfor -%}
+        </select>
+      </div>
+
+      <!-- Color -->
+      {%- assign color_tag_prefix = 'color_' -%}
+      {%- assign has_colors = false -%}
+      {%- for tag in collection.all_tags -%}
+        {%- if tag contains color_tag_prefix -%}{%- assign has_colors = true -%}{%- break -%}{%- endif -%}
+      {%- endfor -%}
+      {%- if has_colors -%}
+      <div class="nx-col-sidebar-widget">
+        <h3 class="nx-col-sidebar-title">Color</h3>
+        <div class="nx-col-colors">
+          {%- assign color_map = 'red:#FF3333,blue:#3366FF,green:#22c56b,yellow:#FFC72C,purple:#8000FF,orange:#FF6600,black:#222,white:#eee' | split: ',' -%}
+          {%- for cmap in color_map -%}
+            {%- assign parts = cmap | split: ':' -%}
+            {%- assign cname = parts[0] -%}
+            {%- assign ccolor = parts[1] -%}
+            {%- assign ctag = color_tag_prefix | append: cname -%}
+            {%- if collection.all_tags contains ctag -%}
+              <a href="{{ collection.url }}/{{ ctag | handleize }}" class="nx-col-color-box {% if current_tags contains ctag %}active{% endif %}" style="background: {{ ccolor }};" title="{{ cname }}"></a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- endif -%}
+
+      <!-- Size -->
+      {%- assign size_tags = 'size_s,size_m,size_l,size_xl,size_xxl' | split: ',' -%}
+      {%- assign has_sizes = false -%}
+      {%- for st in size_tags -%}
+        {%- if collection.all_tags contains st -%}{%- assign has_sizes = true -%}{%- break -%}{%- endif -%}
+      {%- endfor -%}
+      {%- if has_sizes -%}
+      <div class="nx-col-sidebar-widget">
+        <h3 class="nx-col-sidebar-title">Size</h3>
+        <div class="nx-col-sizes">
+          {%- assign size_labels = 'S,M,L,XL,XXL' | split: ',' -%}
+          {%- for i in (0..4) -%}
+            {%- assign st = size_tags[i] -%}
+            {%- assign sl = size_labels[i] -%}
+            {%- if collection.all_tags contains st -%}
+              <a href="{{ collection.url }}/{{ st | handleize }}" class="nx-col-size-btn {% if current_tags contains st %}active{% endif %}">{{ sl }}</a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- endif -%}
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="nx-col-main">
+      <!-- Mobile Filter Button -->
+      <button class="nx-col-mobile-filter" onclick="document.getElementById('nx-sidebar-{{ nx_id }}').classList.add('open'); document.getElementById('nx-sidebar-overlay-{{ nx_id }}').classList.add('open');">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:middle;margin-right:6px;"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+        FILTERS & SORT
+      </button>
+
+      <!-- Toolbar + Product Grid (inside paginate) -->
+      {%- paginate collection.products by section.settings.products_per_page -%}
+      <div class="nx-col-toolbar">
+        <div class="nx-col-toolbar-left">
+          <span class="nx-col-count">
+            SHOWING {{ paginate.current_offset | plus: 1 }}–{{ paginate.current_offset | plus: collection.products.size }} OF {{ collection.products_count }} PRODUCTS
+          </span>
+        </div>
+        <div class="nx-col-toolbar-right">
+          <select class="nx-col-sort-toolbar" onchange="nxSortChange(this.value, '{{ collection.url }}')">
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>
+            {%- endfor -%}
+          </select>
+          <button class="nx-col-view-btn active" title="Grid view">
+            <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg>
+          </button>
+          <button class="nx-col-view-btn" title="List view">
+            <svg viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+          </button>
+        </div>
+      </div>
+      {%- if collection.products.size > 0 -%}
+        <div class="nx-col-grid">
+          {%- for product in collection.products -%}
+            {%- assign card_id = nx_id | append: '-' | append: forloop.index -%}
+            <div class="nx-col-card" style="animation: nxFadeIn 0.4s ease-out both; animation-delay: {{ forloop.index | times: 0.05 }}s;">
+              <div class="nx-col-card-img-wrap">
+                {%- if product.featured_image -%}
+                  <img class="nx-col-card-img" src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" loading="lazy" width="{{ product.featured_image.width }}" height="{{ product.featured_image.height }}">
+                {%- else -%}
+                  <div class="nx-col-card-noimg"><span>No Image</span></div>
+                {%- endif -%}
+                <div class="nx-col-corner nx-col-corner--tl"></div>
+                <div class="nx-col-corner nx-col-corner--br"></div>
+                <div class="nx-col-scanline"></div>
+
+                {%- comment -%} Badge logic {%- endcomment -%}
+                {%- assign badge_type = '' -%}
+                {%- if product.compare_at_price > product.price and product.available -%}
+                  {%- assign badge_type = 'sale' -%}
+                  {%- assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price | round -%}
+                {%- endif -%}
+                {%- for tag in product.tags -%}
+                  {%- assign tag_lower = tag | downcase -%}
+                  {%- if tag_lower == 'new' -%}{%- assign badge_type = 'new' -%}{%- endif -%}
+                  {%- if tag_lower == 'hot' -%}{%- assign badge_type = 'hot' -%}{%- endif -%}
+                  {%- if tag_lower == 'limited' -%}{%- assign badge_type = 'limited' -%}{%- endif -%}
+                {%- endfor -%}
+                {%- if badge_type != '' -%}
+                  <span class="nx-col-badge nx-col-badge--{{ badge_type }}">
+                    {%- if badge_type == 'sale' -%}-{{ discount_pct }}%
+                    {%- else -%}{{ badge_type | upcase }}
+                    {%- endif -%}
+                  </span>
+                {%- endif -%}
+              </div>
+
+              <div class="nx-col-card-body">
+                <h3 class="nx-col-card-title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+                <div class="nx-col-card-stars">
+                  ★★★★★ <span>({{ product.id | modulo: 300 | plus: 50 }})</span>
+                </div>
+                <div class="nx-col-card-divider"></div>
+                <div class="nx-col-card-bottom">
+                  <div class="nx-col-price-wrap">
+                    <span class="nx-col-price">{{ product.price | money }}</span>
+                    {%- if product.compare_at_price > product.price -%}
+                      <span class="nx-col-compare">{{ product.compare_at_price | money }}</span>
+                    {%- endif -%}
+                  </div>
+                  <button class="nx-col-card-cart" onclick="nxAddToCart({{ product.selected_or_first_available_variant.id }}, this)" title="Add to cart" {% unless product.available %}disabled style="opacity:0.3;pointer-events:none;"{% endunless %}>
+                    <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        {%- comment -%} Pagination {%- endcomment -%}
+        {%- if paginate.pages > 1 -%}
+          <nav class="nx-col-pagination">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="nx-col-page">‹</a>
+            {%- endif -%}
+            {%- for page in paginate.parts -%}
+              {%- if page.is_link -%}
+                <a href="{{ page.url }}" class="nx-col-page">{{ page.title }}</a>
+              {%- elsif page.title == paginate.current_page -%}
+                <span class="nx-col-page active">{{ page.title }}</span>
+              {%- else -%}
+                <span class="nx-col-page">{{ page.title }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="nx-col-page">›</a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+
+      {%- else -%}
+        <div class="nx-col-empty">
+          <h3>NO PRODUCTS FOUND</h3>
+          <p>Try adjusting your filters or check back later.</p>
+        </div>
+      {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="nx-col-toast" id="nx-toast-{{ nx_id }}">Added to cart!</div>
+</div>
+
+<style>
+  @keyframes nxFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .nx-col-spinner { animation: nxSpin 0.8s linear infinite; }
+  @keyframes nxSpin { to { transform: rotate(360deg); } }
+</style>
+
+<script>
+  function nxSortChange(value, baseUrl) {
+    var url = new URL(window.location.href);
+    url.searchParams.set('sort_by', value);
+    window.location.href = url.toString();
+  }
+
+  function nxFilterPrice(id, baseUrl) {
+    var min = document.getElementById('nx-price-min-' + id).value;
+    var max = document.getElementById('nx-price-max-' + id).value;
+    var url = new URL(window.location.href);
+    if (min) url.searchParams.set('filter.v.price.gte', min);
+    else url.searchParams.delete('filter.v.price.gte');
+    if (max) url.searchParams.set('filter.v.price.lte', max);
+    else url.searchParams.delete('filter.v.price.lte');
+    window.location.href = url.toString();
+  }
+
+  function nxAddToCart(variantId, btn) {
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="nx-col-spinner"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>';
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function() {
+      btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+      var toast = document.getElementById('nx-toast-{{ nx_id }}');
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>'; }, 2000);
+    })
+    .catch(function() {
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>';
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "NX Collection Page",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner Background Image"
+    },
+    {
+      "type": "text",
+      "id": "hero_badge",
+      "label": "Banner Badge Text",
+      "default": "OUR COLLECTION"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Banner Title (HTML supported)",
+      "default": "GEAR UP, <span>BOOYAH!</span>"
+    },
+    {
+      "type": "text",
+      "id": "hero_desc",
+      "label": "Banner Description",
+      "default": "Explore our exclusive Free Fire inspired collection. Limited drops, legendary style!"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 16,
+      "label": "Products per page"
+    }
+  ]
+}
+{% endschema %}
