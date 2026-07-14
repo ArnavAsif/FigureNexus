@@ -1438,30 +1438,42 @@ z-index: 0;
 content: ''; position: absolute; inset: 0;
 background: linear-gradient(90deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.6) 50%, rgba(10,10,15,0.3) 100%);
 }
-.le-hero__content { position: relative; z-index: 2; max-width: 550px; }
+.le-hero__content { position: relative; z-index: 2; max-width: 550px; display: flex; flex-direction: column; align-items: center;}
 .le-hero__badge {
 display: inline-flex; align-items: center; gap: 8px;
-font-size: 0.75rem; font-weight: 700; letter-spacing: 3px;
+font-size: 0.95rem; font-weight: 700; letter-spacing: 3px;
 text-transform: uppercase; color: var(--nx-gold); margin-bottom: 16px; opacity: 0.8;
 }
 .le-hero__badge::before {
 content: ''; width: 30px; height: 1px; background: var(--nx-gold);
 }
+.le-hero__badge::after {
+content: ''; width: 30px; height: 1px; background: var(--nx-gold);
+}
 .le-hero__title {
-font-family: 'Orbitron', sans-serif; font-size: clamp(2.5rem, 6vw, 5rem);
-font-weight: 900; line-height: 1; text-transform: uppercase; margin: 0 0 16px 0;
-background: linear-gradient(135deg, #ffe08a 0%, #ffc94d 40%, #ff8a2b 100%);
+font-family: 'Orbitron', sans-serif; font-size: clamp(4rem, 8vw, 10.5rem);
+font-weight: 900; line-height: 0.95; text-transform: uppercase; margin: 0 0 16px 0;
+background: linear-gradient(180deg, #ffe88a 0%, #ffc94d 30%, #e8a000 60%, #cc7700 100%);
 -webkit-background-clip: text; background-clip: text; color: transparent;
+-webkit-text-fill-color: transparent;
+filter: drop-shadow(0 0 20px rgba(255,199,44,0.4)) drop-shadow(0 0 40px rgba(255,140,0,0.2));
+text-shadow: none;
+letter-spacing: 2px;
+white-space: pre-line;
 }
 .le-hero__subtitle {
-font-size: 1rem; color: rgba(255,255,255,0.6);
+font-size: 1.2rem; color: rgba(255,255,255,0.6);
 letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px;
+}
+.le-brand-badge img {
+    max-height: 280px !important;
+    width: auto;
 }
 .le-hero__timer {
 display: inline-flex; align-items: center; gap: 10px;
 padding: 10px 20px; border-radius: 8px;
 background: rgba(255,199,44,0.08); border: 1px solid rgba(255,199,44,0.15);
-font-size: 0.8rem; color: var(--nx-gold); font-weight: 600;
+font-size: 1.4rem; color: var(--nx-gold); font-weight: 600;
 letter-spacing: 1px; margin-bottom: 30px;
 }
 .le-hero__timer svg { width: 16px; height: 16px; fill: var(--nx-gold); }
@@ -1494,10 +1506,10 @@ display: flex; align-items: center; justify-content: center;
 }
 .le-feature__icon svg { width: 16px; height: 16px; fill: var(--nx-gold); }
 .le-feature__text h4 {
-font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;
+font-size: 1.8rem; font-weight: 700; letter-spacing: 1px;
 text-transform: uppercase; margin: 0 0 4px 0; color: #fff;
 }
-.le-feature__text p { font-size: 0.7rem; color: rgba(255,255,255,0.45); margin: 0; line-height: 1.4; }
+.le-feature__text p { font-size: 0.9rem; color: rgba(255,255,255,0.45); margin: 0; line-height: 1.4; }
 .le-shop-btn {
 display: block; width: fit-content; margin: 0 auto 10px;
 padding: 16px 48px; border-radius: 10px;
@@ -1511,8 +1523,8 @@ box-shadow: 0 6px 25px rgba(255,199,44,0.3); transition: transform 0.3s, box-sha
 .le-carousel-wrap { position: relative; padding: 0 5% 50px; }
 .le-carousel-title {
 text-align: center; font-family: 'Orbitron', sans-serif;
-font-size: 1.3rem; font-weight: 800; letter-spacing: 4px;
-text-transform: uppercase; margin: 0 0 30px 0; color: #fff;
+font-size: 3rem; font-weight: 800; letter-spacing: 4px;
+text-transform: uppercase; margin: 40px 0; color: #fff;
 }
 .le-carousel {
 display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth;
@@ -1545,10 +1557,10 @@ display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .le-bottom-feat__icon svg { width: 14px; height: 14px; fill: var(--nx-gold); }
 .le-bottom-feat__text h5 {
-font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;
+font-size: 1.7rem; font-weight: 700; letter-spacing: 1px;
 text-transform: uppercase; margin: 0; color: #fff;
 }
-.le-bottom-feat__text p { font-size: 0.6rem; color: rgba(255,255,255,0.4); margin: 0; }
+.le-bottom-feat__text p { font-size: 0.9rem; color: rgba(255,255,255,0.4); margin: 0; }
 .le-brand-badge {
 display: flex; align-items: center; gap: 8px;
 font-family: 'Orbitron', sans-serif; font-weight: 900;
