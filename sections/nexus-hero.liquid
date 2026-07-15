@@ -1486,13 +1486,108 @@
             </script>
 
           {%- when 'card_story' -%}
-            <div class="nexus-story-view">
-              {%- if block.settings.story_heading != blank -%}
-                <h2>{{ block.settings.story_heading }}</h2>
+            {%- assign story_bg_opacity = block.settings.story_section_bg_opacity | times: 1.0 | divided_by: 100 -%}
+            {%- assign story_primary = block.settings.story_primary_color | default: '#FFC72C' -%}
+            {%- assign story_accent = block.settings.story_accent_color | default: '#FF7A00' -%}
+            <style>
+              .fn-section-{{ block.id }} {
+                position: relative;
+                overflow: hidden;
+                width: 100vw;
+                margin-left: calc(-50vw + 50%);
+                --story-primary: {{ story_primary }};
+                --story-accent: {{ story_accent }};
+              }
+            </style>
+            <div class="fn-section-{{ block.id }}">
+              {%- if block.settings.story_section_bg != blank -%}
+                <div class="fn-section-bg-image" style="background-image: url('{{ block.settings.story_section_bg | image_url: width: 1920 }}'); opacity: {{ story_bg_opacity }};"></div>
               {%- endif -%}
-              {%- if block.settings.story_body != blank -%}
-                <p>{{ block.settings.story_body }}</p>
-              {%- endif -%}
+
+              <div class="nexus-story-section">
+                <!-- HERO -->
+              <div class="nexus-story-hero">
+                {%- if block.settings.story_hero_bg != blank -%}
+                  <div class="nexus-story-hero__bg" style="background-image:url('{{ block.settings.story_hero_bg | image_url: width: 1920 }}');"></div>
+                {%- endif -%}
+                <div class="nexus-story-hero__content">
+                  <div class="nexus-story-hero__tagline">
+                    <span class="nexus-story-hero__tagline-line"></span>
+                    <span class="nexus-story-hero__tagline-icon">
+                      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 7l5-5 5 5M7 17l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                    </span>
+                    {{ block.settings.story_tagline | default: 'FROM PASSION TO PURPOSE' }}
+                    <span class="nexus-story-hero__tagline-icon">
+                      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 7l5-5 5 5M7 17l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                    </span>
+                    <span class="nexus-story-hero__tagline-line"></span>
+                  </div>
+                  <h2 class="nexus-story-hero__title">{{ block.settings.story_heading | default: 'OUR <span>STORY</span>' }}</h2>
+                  {% comment %} <div class="nexus-story-hero__divider">
+                    <svg viewBox="0 0 24 24" width="28" height="28"><path d="M12 2L9 9H2l6 4.5L5.5 21 12 16.5 18.5 21 16 13.5 22 9h-7z" fill="currentColor"/></svg>
+                  </div> {% endcomment %}
+                  <p class="nexus-story-hero__desc">{{ block.settings.story_body | default: 'Booyah! Merchant was born from our love for Free Fire and the community that unites millions of survivors around the world.' }}</p>
+                </div>
+                {%- if block.settings.story_hero_char != blank -%}
+                  <div class="nexus-story-hero__character">
+                    <img src="{{ block.settings.story_hero_char | image_url: width: 1200 }}" alt="">
+                  </div>
+                {%- endif -%}
+                
+              </div>
+
+              <!-- STORY CARDS -->
+              <div class="nexus-story-cards">
+                {%- for i in (1..4) -%}
+                  {%- assign card_num = i -%}
+                  {%- assign ct = 'story_card_' | append: i | append: '_title' -%}
+                  {%- assign cd = 'story_card_' | append: i | append: '_desc' -%}
+                  {%- assign ci = 'story_card_' | append: i | append: '_image' -%}
+                  {%- if block.settings[ct] != blank -%}
+                    <div class="nexus-story-card">
+                      <div class="nexus-story-card__media">
+                        {%- if block.settings[ci] != blank -%}
+                          <img src="{{ block.settings[ci] | image_url: width: 600 }}" alt="" loading="lazy">
+                        {%- endif -%}
+                        <div class="nexus-story-card__glow"></div>
+                      </div>
+                      <div class="nexus-story-card__content">
+                        <span class="nexus-story-card__num">{{ '0' | append: i }}</span>
+                        <h3 class="nexus-story-card__title">{{ block.settings[ct] }}</h3>
+                        <p class="nexus-story-card__desc">{{ block.settings[cd] }}</p>
+                      </div>
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+
+              <!-- BOTTOM SECTION -->
+              <div class="nexus-story-bottom">
+                <div class="nexus-story-bottom__left">
+                  <div class="nexus-story-bottom__icon">
+                    <svg viewBox="0 0 24 24" width="32" height="32"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+                  </div>
+                  <div>
+                    <h5 class="nexus-story-bottom__label">{{ block.settings.bottom_label | default: "WE'RE JUST GETTING STARTED" }}</h5>
+                    <p class="nexus-story-bottom__text">{{ block.settings.bottom_text | default: 'The journey continues, and the best is yet to come. Thank you for being part of our story.' }}</p>
+                  </div>
+                </div>
+                {% comment %} <div class="nexus-story-bottom__center">
+                  <h3 class="nexus-story-bottom__heading">ONE GAME. ONE COMMUNITY.<br><span>ONE FAMILY.</span></h3>
+                  {%- if block.settings.bottom_cta_link != blank -%}
+                    <a href="{{ block.settings.bottom_cta_link }}" class="nexus-story-bottom__cta">
+                      {{ block.settings.bottom_cta_text | default: 'JOIN OUR JOURNEY' }}
+                      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.59 5.59L12 20l8-8z"/></svg>
+                    </a>
+                  {%- endif -%}
+                </div> {% endcomment %}
+                {%- if block.settings.bottom_char != blank -%}
+                  <div class="nexus-story-bottom__characters">
+                    <img src="{{ block.settings.bottom_char | image_url: width: 800 }}" alt="">
+                  </div>
+                {%- endif -%}
+              </div>
+            </div>
             </div>
 
           {%- when 'card_about' -%}
@@ -3424,13 +3519,52 @@
         },
         { "type": "text", "id": "view_title", "label": "View Title", "default": "OUR STORY" },
         { "type": "text", "id": "view_subtitle", "label": "View Subtitle", "default": "DISCOVER OUR JOURNEY" },
-        { "type": "text", "id": "story_heading", "label": "Story Heading", "default": "THE BEGINNING" },
-        {
-          "type": "textarea",
-          "id": "story_body",
-          "label": "Story Body",
-          "default": "Figure Nexus was born from a passion for anime, culture, and the art of collectibles."
-        }
+
+        { "type": "header", "content": "Section Background" },
+        { "type": "image_picker", "id": "story_section_bg", "label": "Full Section Background Image" },
+        { "type": "range", "id": "story_section_bg_opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "label": "Background Image Opacity", "default": 15 },
+
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "story_primary_color", "label": "Primary Color (Gold)", "default": "#FFC72C" },
+        { "type": "color", "id": "story_accent_color", "label": "Accent Color (Orange)", "default": "#FF7A00" },
+
+        { "type": "header", "content": "Hero Section" },
+        { "type": "image_picker", "id": "story_hero_bg", "label": "Hero Background Image" },
+        { "type": "image_picker", "id": "story_hero_char", "label": "Hero Character Image" },
+        { "type": "text", "id": "story_tagline", "label": "Tagline", "default": "FROM PASSION TO PURPOSE" },
+        { "type": "liquid", "id": "story_heading", "label": "Story Heading (use <span> for accent color)", "default": "OUR <span>STORY</span>" },
+        { "type": "textarea", "id": "story_body", "label": "Story Description", "default": "Booyah! Merchant was born from our love for Free Fire and the community that unites millions of survivors around the world." },
+
+        { "type": "header", "content": "Promise Sidebar" },
+        { "type": "text", "id": "promise_title", "label": "Promise Title", "default": "OUR PROMISE" },
+        { "type": "textarea", "id": "promise_text", "label": "Promise Text", "default": "Premium quality.<br>Exclusive designs.<br>Made for survivors.<br>By survivors." },
+
+        { "type": "header", "content": "Story Card 1" },
+        { "type": "image_picker", "id": "story_card_1_image", "label": "Card 1 Image" },
+        { "type": "text", "id": "story_card_1_title", "label": "Card 1 Title", "default": "IT ALL STARTED WITH A PASSION" },
+        { "type": "textarea", "id": "story_card_1_desc", "label": "Card 1 Description", "default": "We started as a group of Free Fire enthusiasts who wanted more than just gameplay - we wanted identity, style, and a way to represent our love for the game." },
+
+        { "type": "header", "content": "Story Card 2" },
+        { "type": "image_picker", "id": "story_card_2_image", "label": "Card 2 Image" },
+        { "type": "text", "id": "story_card_2_title", "label": "Card 2 Title", "default": "BUILT FOR THE COMMUNITY" },
+        { "type": "textarea", "id": "story_card_2_desc", "label": "Card 2 Description", "default": "We listened to our community, understood their needs, and started creating merchandise that truly represents every survivor's spirit." },
+
+        { "type": "header", "content": "Story Card 3" },
+        { "type": "image_picker", "id": "story_card_3_image", "label": "Card 3 Image" },
+        { "type": "text", "id": "story_card_3_title", "label": "Card 3 Title", "default": "QUALITY MEETS DEDICATION" },
+        { "type": "textarea", "id": "story_card_3_desc", "label": "Card 3 Description", "default": "From concept to creation, we focus on premium materials, unique designs, and attention to detail - because you deserve the best." },
+
+        { "type": "header", "content": "Story Card 4" },
+        { "type": "image_picker", "id": "story_card_4_image", "label": "Card 4 Image" },
+        { "type": "text", "id": "story_card_4_title", "label": "Card 4 Title", "default": "GROWING TOGETHER. WINNING TOGETHER." },
+        { "type": "textarea", "id": "story_card_4_desc", "label": "Card 4 Description", "default": "Today, Booyah! Merchant is more than a store - it's a movement. We continue to grow, evolve, and bring exclusive experiences to our global family." },
+
+        { "type": "header", "content": "Bottom Section" },
+        { "type": "text", "id": "bottom_label", "label": "Bottom Label", "default": "WE'RE JUST GETTING STARTED" },
+        { "type": "textarea", "id": "bottom_text", "label": "Bottom Text", "default": "The journey continues, and the best is yet to come. Thank you for being part of our story." },
+        { "type": "text", "id": "bottom_cta_text", "label": "CTA Button Text", "default": "JOIN OUR JOURNEY" },
+        { "type": "url", "id": "bottom_cta_link", "label": "CTA Button Link" },
+        { "type": "image_picker", "id": "bottom_char", "label": "Bottom Characters Image" }
       ]
     },
     {

@@ -591,8 +591,7 @@
 }
 
 .nexus-lobby-card__title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.4rem;
+    font-size: 2rem;
     font-weight: 800;
     letter-spacing: 3px;
     text-transform: uppercase;
@@ -627,13 +626,12 @@
 }
 
 .nexus-lobby__tagline {
-    font-family: 'Orbitron', sans-serif;
-    font-size: clamp(1rem, 2.5vw, 1.8rem);
+    font-family: 'Scary_Brusher', sans-serif;
+    font-size: clamp(2.3rem, 3.5vw, 4.8rem);
     font-weight: 900;
     letter-spacing: 4px;
     text-transform: uppercase;
     color: #fff;
-    margin-bottom: 6px;
 }
 
 .nexus-lobby__tagline span {
@@ -641,8 +639,8 @@
 }
 
 .nexus-lobby__tagline-sub {
-    font-size: 0.8rem;
-    color: var(--nx-text-muted);
+    font-size: 1.25rem;
+    color: #fafafa;
     letter-spacing: 4px;
     text-transform: uppercase;
     margin-bottom: 16px;
@@ -833,7 +831,7 @@
 .nexus-content-view {
     position: relative;
     width: 100%;
-    padding: 40px 4% 60px;
+    padding: 40px 4% 5px;
     min-height: calc(100vh - 80px);
 }
 
@@ -846,7 +844,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-color: #0C0A06;
+    background-color: transparent;
     z-index: 0;
 }
 
@@ -1797,7 +1795,313 @@
     }
 }
 
-.nexus-story-view,
+.nexus-story-section {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    background: transparent;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+}
+
+/* HERO */
+.nexus-story-hero {
+    position: relative;
+    min-height: 500px;
+    padding: 60px 5%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.nexus-story-hero__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4;
+}
+
+.nexus-story-hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+}
+
+.nexus-story-hero__tagline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--story-accent, #FF7A00);
+    margin-bottom: 20px;
+}
+
+.nexus-story-hero__tagline-line {
+    width: 40px;
+    height: 2px;
+    background: var(--story-accent, #FF7A00);
+}
+
+.nexus-story-hero__tagline-icon {
+    display: flex;
+    align-items: center;
+    color: var(--story-accent, #FF7A00);
+}
+
+.nexus-story-hero__title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 1.05;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.nexus-story-hero__title span {
+    color: var(--story-accent, #FF7A00);
+    display: block;
+}
+
+.nexus-story-hero__divider {
+    color: var(--story-primary, #FFC72C);
+    margin-bottom: 24px;
+}
+
+.nexus-story-hero__desc {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: #ccc;
+    max-width: 520px;
+}
+
+.nexus-story-hero__character {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nexus-story-hero__character img {
+    max-width: 100%;
+    height: auto;
+    max-height: 450px;
+    object-fit: contain;
+}
+
+
+
+
+
+/* STORY CARDS */
+.nexus-story-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 40px 5%;
+}
+
+.nexus-story-card {
+    background: #111;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.nexus-story-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(255, 199, 44, 0.15);
+}
+
+.nexus-story-card__media {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.nexus-story-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.nexus-story-card__glow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(to top, #111, transparent);
+}
+
+.nexus-story-card__content {
+    padding: 20px;
+}
+
+.nexus-story-card__num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--story-primary, #FFC72C);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.nexus-story-card__title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    line-height: 1.3;
+    color: #fff;
+}
+
+.nexus-story-card__desc {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: #aaa;
+}
+
+/* BOTTOM SECTION */
+.nexus-story-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: center;
+    padding: 50px 5%;
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1A0A 100%);
+    border-top: 1px solid var(--story-primary, rgba(255, 199, 44, 0.2));
+    border-radius: 16px;
+}
+
+.nexus-story-bottom__left {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.nexus-story-bottom__icon {
+    color: var(--story-primary, #FFC72C);
+    flex-shrink: 0;
+}
+
+.nexus-story-bottom__label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--story-accent, #FF7A00);
+    margin-bottom: 8px;
+}
+
+.nexus-story-bottom__text {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #aaa;
+}
+
+.nexus-story-bottom__center {
+    text-align: center;
+}
+
+.nexus-story-bottom__heading {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin-bottom: 20px;
+}
+
+.nexus-story-bottom__heading span {
+    color: var(--story-primary, #FFC72C);
+    font-style: italic;
+}
+
+.nexus-story-bottom__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    background: transparent;
+    border: 2px solid var(--story-primary, #FFC72C);
+    color: var(--story-primary, #FFC72C);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.nexus-story-bottom__cta:hover {
+    background: var(--story-primary, #FFC72C);
+    color: #0A0A0A;
+}
+
+.nexus-story-bottom__characters {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nexus-story-bottom__characters img {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .nexus-story-hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 40px 5%;
+    }
+
+    .nexus-story-hero__content {
+        max-width: 100%;
+    }
+
+    
+
+    .nexus-story-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .nexus-story-bottom {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .nexus-story-bottom__left {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .nexus-story-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .nexus-story-card__media {
+        height: 180px;
+    }
+}
+
 .nexus-about-view {
     max-width: 800px;
     margin: 0 auto;
@@ -1805,7 +2109,6 @@
     text-align: center;
 }
 
-.nexus-story-view h2,
 .nexus-about-view h2 {
     font-family: 'Orbitron', sans-serif;
     font-size: clamp(1.5rem, 3vw, 2.5rem);
@@ -1816,7 +2119,6 @@
     color: var(--nx-gold);
 }
 
-.nexus-story-view p,
 .nexus-about-view p {
     font-size: 1rem;
     line-height: 1.8;
@@ -3079,7 +3381,7 @@
     }
 
     .nexus-lobby-card__title {
-        font-size: 0.75rem;
+        font-size: 1.75rem;
         letter-spacing: 2px;
     }
 
@@ -3183,7 +3485,7 @@
     }
 
     .nexus-lobby__tagline {
-        font-size: 0.85rem;
+        font-size: 2.85rem;
         letter-spacing: 3px;
         margin-bottom: 4px;
     }
@@ -3293,7 +3595,7 @@
     }
 
     .nexus-lobby__tagline {
-        font-size: 0.75rem;
+        font-size: 2.75rem;
     }
 
     .nexus-lobby__cta-btn {

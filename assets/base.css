@@ -3610,3 +3610,12 @@ details-disclosure > details {
     transform: translateX(100%) scaleX(0);
   }
 }
+
+@font-face {
+  font-family: 'Scary_Brusher';
+  src: url('https://cdn.shopify.com/s/files/1/0736/3470/9592/files/Scary_Brusher.woff2?v=1784088710') ;
+}
+
+h1,h2,h3,h4,h5,h5,.title{
+  font-family: 'Scary_Brusher' !important;
+}
