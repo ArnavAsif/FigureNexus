@@ -260,29 +260,29 @@
       <p class="nexus-lobby__tagline-sub">
         {{ section.settings.tagline_sub | default: 'OFFICIAL FREE FIRE MERCH STORE' }}
       </p>
-      <a href="{{ section.settings.cta_link | default: '/collections/all' }}" class="nexus-lobby__cta-btn">
+      <button class="nexus-lobby__cta-btn nexus-explore-btn" id="nexus-explore-btn-{{ nexus_id }}">
         {{ section.settings.cta_text | default: 'EXPLORE NOW' }}
         <svg viewBox="0 0 24 24">
           <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
         </svg>
-      </a>
+      </button>
     </div>
 
     <!-- BOTTOM BAR -->
     <div class="nexus-lobby__bottom">
       <div class="nexus-lobby__bottom-left">
-        <a href="/pages/events" class="nexus-lobby__bottom-btn">
+        <button class="nexus-lobby__bottom-btn nexus-tooltip" id="nexus-events-btn-{{ nexus_id }}" data-tooltip="VIEW ACTIVE EVENTS">
           <svg viewBox="0 0 24 24">
             <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
           </svg>
           <span>EVENTS</span>
-        </a>
-        <a href="/pages/missions" class="nexus-lobby__bottom-btn">
+        </button>
+        <button class="nexus-lobby__bottom-btn nexus-tooltip" id="nexus-missions-btn-{{ nexus_id }}" data-tooltip="COMPLETE DAILY CHALLENGES">
           <svg viewBox="0 0 24 24">
             <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
           </svg>
           <span>DAILY MISSIONS</span>
-        </a>
+        </button>
       </div>
       <div class="nexus-lobby__bottom-right">
         <span class="nexus-lobby__social-label">FOLLOW US</span>
@@ -336,6 +336,238 @@
             </a>
           {%- endif -%}
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPLORE MODAL -->
+  <div class="nexus-explore-modal" id="nexus-explore-modal-{{ nexus_id }}">
+    <div class="nexus-explore-modal__overlay" id="nexus-explore-overlay-{{ nexus_id }}"></div>
+    <div class="nexus-explore-modal__container">
+      <div class="nexus-explore-modal__header">
+        <h2 class="nexus-explore-modal__title">SELECT YOUR <span>LOADOUT</span></h2>
+        <p class="nexus-explore-modal__subtitle">CHOOSE A CATEGORY TO EXPLORE</p>
+        <button class="nexus-explore-modal__close" id="nexus-explore-close-{{ nexus_id }}">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="nexus-explore-modal__grid">
+        {%- for block in section.blocks -%}
+          <div
+            class="nexus-explore-card"
+            style="--card-color: {{ block.settings.glow_color | default: '#FF7A00' }};"
+            data-view="view-{{ block.id }}"
+          >
+            <div class="nexus-explore-card__glass"></div>
+            <div class="nexus-scanline"></div>
+            {%- if block.settings.card_image != blank -%}
+              <img
+                src="{{ block.settings.card_image | image_url: width: 600 }}"
+                class="nexus-explore-card__img"
+                alt=""
+                loading="lazy"
+              >
+            {%- endif -%}
+            <div class="nexus-explore-card__content">
+              <span
+                class="nexus-explore-card__badge"
+                style="background: {{ block.settings.glow_color | default: '#FF7A00' }}; {% if block.settings.position == 'right' %}color: #111;{% endif %}"
+              >
+                {{- block.settings.badge | default: 'FEATURED' -}}
+              </span>
+              <h3 class="nexus-explore-card__title">{{ block.settings.title }}</h3>
+              <p class="nexus-explore-card__subtitle">{{ block.settings.subtitle }}</p>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS MODAL -->
+  <div class="nexus-events-modal nexus-bottom-modal" id="nexus-events-modal-{{ nexus_id }}">
+    <div class="nexus-bottom-modal__overlay" id="nexus-events-overlay-{{ nexus_id }}"></div>
+    <div class="nexus-bottom-modal__container">
+      <div class="nexus-bottom-modal__header">
+        <div class="nexus-bottom-modal__header-left">
+          <svg viewBox="0 0 24 24" width="28" height="28"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" fill="currentColor"/></svg>
+          <div>
+            <h2 class="nexus-bottom-modal__title">ACTIVE <span>EVENTS</span></h2>
+            <p class="nexus-bottom-modal__subtitle">LIMITED TIME ONLY</p>
+          </div>
+        </div>
+        <button class="nexus-bottom-modal__close" id="nexus-events-close-{{ nexus_id }}">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="nexus-events-modal__list">
+        <div class="nexus-event-item nexus-event-item--hot">
+          <div class="nexus-event-item__badge">HOT</div>
+          <div class="nexus-event-item__icon">
+            <svg viewBox="0 0 24 24" width="32" height="32"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z" fill="currentColor"/></svg>
+          </div>
+          <div class="nexus-event-item__content">
+            <h4>BOOYAH FESTIVAL</h4>
+            <p>Exclusive skins and rewards. Earn double points on all matches!</p>
+          </div>
+          <div class="nexus-event-item__timer">
+            <span class="nexus-event-item__timer-label">ENDS IN</span>
+            <span class="nexus-event-item__timer-value">2D 14H</span>
+          </div>
+        </div>
+
+        <div class="nexus-event-item">
+          <div class="nexus-event-item__badge nexus-event-item__badge--new">NEW</div>
+          <div class="nexus-event-item__icon">
+            <svg viewBox="0 0 24 24" width="32" height="32"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" fill="currentColor"/></svg>
+          </div>
+          <div class="nexus-event-item__content">
+            <h4>RANKED SHOWDOWN</h4>
+            <p>Climb the ranks and earn exclusive ranked rewards this season.</p>
+          </div>
+          <div class="nexus-event-item__timer">
+            <span class="nexus-event-item__timer-label">ENDS IN</span>
+            <span class="nexus-event-item__timer-value">5D 08H</span>
+          </div>
+        </div>
+
+        <div class="nexus-event-item">
+          <div class="nexus-event-item__badge nexus-event-item__badge--limited">LIMITED</div>
+          <div class="nexus-event-item__icon">
+            <svg viewBox="0 0 24 24" width="32" height="32"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/></svg>
+          </div>
+          <div class="nexus-event-item__content">
+            <h4>CREW BATTLE</h4>
+            <p>Form your squad and compete for exclusive crew rewards.</p>
+          </div>
+          <div class="nexus-event-item__timer">
+            <span class="nexus-event-item__timer-label">ENDS IN</span>
+            <span class="nexus-event-item__timer-value">1D 22H</span>
+          </div>
+        </div>
+
+        <div class="nexus-event-item">
+          <div class="nexus-event-item__icon">
+            <svg viewBox="0 0 24 24" width="32" height="32"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z" fill="currentColor"/></svg>
+          </div>
+          <div class="nexus-event-item__content">
+            <h4>SUMMER COLLECTION DROP</h4>
+            <p>Check out the new summer skins available for a limited time.</p>
+          </div>
+          <div class="nexus-event-item__timer">
+            <span class="nexus-event-item__timer-label">ENDS IN</span>
+            <span class="nexus-event-item__timer-value">7D 00H</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY MISSIONS MODAL -->
+  <div class="nexus-missions-modal nexus-bottom-modal" id="nexus-missions-modal-{{ nexus_id }}">
+    <div class="nexus-bottom-modal__overlay" id="nexus-missions-overlay-{{ nexus_id }}"></div>
+    <div class="nexus-bottom-modal__container">
+      <div class="nexus-bottom-modal__header">
+        <div class="nexus-bottom-modal__header-left">
+          <svg viewBox="0 0 24 24" width="28" height="28"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" fill="currentColor"/></svg>
+          <div>
+            <h2 class="nexus-bottom-modal__title">DAILY <span>MISSIONS</span></h2>
+            <p class="nexus-bottom-modal__subtitle">COMPLETE & EARN REWARDS</p>
+          </div>
+        </div>
+        <button class="nexus-bottom-modal__close" id="nexus-missions-close-{{ nexus_id }}">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="nexus-missions-modal__progress">
+        <div class="nexus-missions-modal__progress-bar">
+          <div class="nexus-missions-modal__progress-fill" style="width: 65%;"></div>
+        </div>
+        <span class="nexus-missions-modal__progress-text">4/6 MISSIONS COMPLETED</span>
+      </div>
+      <div class="nexus-missions-modal__list">
+        <div class="nexus-mission-item nexus-mission-item--done">
+          <div class="nexus-mission-item__check">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
+          </div>
+          <div class="nexus-mission-item__content">
+            <h4>PLAY 3 MATCHES</h4>
+            <p>Complete 3 matches in any mode</p>
+          </div>
+          <div class="nexus-mission-item__reward">
+            <span>+50</span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="nexus-mission-item nexus-mission-item--done">
+          <div class="nexus-mission-item__check">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
+          </div>
+          <div class="nexus-mission-item__content">
+            <h4>GET 5 ELIMINATIONS</h4>
+            <p>Eliminate 5 enemies in battle</p>
+          </div>
+          <div class="nexus-mission-item__reward">
+            <span>+75</span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="nexus-mission-item nexus-mission-item--done">
+          <div class="nexus-mission-item__check">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
+          </div>
+          <div class="nexus-mission-item__content">
+            <h4>USE A MEDKIT</h4>
+            <p>Heal yourself using a medkit</p>
+          </div>
+          <div class="nexus-mission-item__reward">
+            <span>+30</span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="nexus-mission-item nexus-mission-item--done">
+          <div class="nexus-mission-item__check">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
+          </div>
+          <div class="nexus-mission-item__content">
+            <h4>SHARE A POST</h4>
+            <p>Share your results on social media</p>
+          </div>
+          <div class="nexus-mission-item__reward">
+            <span>+25</span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="nexus-mission-item">
+          <div class="nexus-mission-item__check nexus-mission-item__check--pending"></div>
+          <div class="nexus-mission-item__content">
+            <h4>WIN A MATCH</h4>
+            <p>Get Booyah! in any mode</p>
+          </div>
+          <div class="nexus-mission-item__reward">
+            <span>+100</span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="nexus-mission-item">
+          <div class="nexus-mission-item__check nexus-mission-item__check--pending"></div>
+          <div class="nexus-mission-item__content">
+            <h4>DEAL 500 DAMAGE</h4>
+            <p>Deal 500 total damage in matches</p>
+          </div>
+          <div class="nexus-mission-item__reward">
+            <span>+60</span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="currentColor"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="nexus-missions-modal__footer">
+        <span class="nexus-missions-modal__total">TOTAL: 310 / 500</span>
       </div>
     </div>
   </div>
@@ -674,7 +906,7 @@
               </div>
             </div>
 
-            <div class="nx-sf-toast" id="nx-sf-toast-{{ block.id }}">âœ” Successfully added to inventory</div>
+            <div class="nx-sf-toast" id="nx-sf-toast-{{ block.id }}"> Successfully added to inventory</div>
 
             <script>
               (function () {
@@ -1127,7 +1359,7 @@
             </div>
 
             <!-- TOAST -->
-            <div class="fn-toast" id="nexus-coll-toast-{{ block.id }}">âœ” Successfully added to inventory</div>
+            <div class="fn-toast" id="nexus-coll-toast-{{ block.id }}"> Successfully added to inventory</div>
 
             <script>
               (function () {
@@ -2134,7 +2366,7 @@
             </div>
 
             <!-- TOAST -->
-            <div class="fn-toast" id="fn-toast-{{ block.id }}">âœ” Successfully added to inventory</div>
+            <div class="fn-toast" id="fn-toast-{{ block.id }}"> Successfully added to inventory</div>
 
             <script>
               (function () {
@@ -2647,7 +2879,7 @@
                 </div>
               </div>
             </div>
-            <div class="fn-toast" id="fn-toast-{{ block.id }}">âœ” Successfully added to inventory</div>
+            <div class="fn-toast" id="fn-toast-{{ block.id }}"> Successfully added to inventory</div>
 
             <script>
               (function () {
@@ -3014,6 +3246,109 @@
     var backBtn = document.getElementById('nexus-back-' + id);
     if (backBtn) backBtn.addEventListener('click', goBack);
 
+    /* ===== EXPLORE MODAL ===== */
+    var exploreModal = document.getElementById('nexus-explore-modal-' + id);
+    var exploreBtn = document.getElementById('nexus-explore-btn-' + id);
+    var exploreClose = document.getElementById('nexus-explore-close-' + id);
+    var exploreOverlay = document.getElementById('nexus-explore-overlay-' + id);
+
+    function openExploreModal() {
+      NexusSound.play('click');
+      exploreModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeExploreModal() {
+      NexusSound.play('click');
+      exploreModal.classList.add('closing');
+      setTimeout(function () {
+        exploreModal.classList.remove('active', 'closing');
+        document.body.style.overflow = '';
+      }, 350);
+    }
+
+    if (exploreBtn) exploreBtn.addEventListener('click', openExploreModal);
+    if (exploreClose) exploreClose.addEventListener('click', closeExploreModal);
+    if (exploreOverlay) exploreOverlay.addEventListener('click', closeExploreModal);
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        if (exploreModal.classList.contains('active')) closeExploreModal();
+        if (eventsModal.classList.contains('active')) closeEventsModal();
+        if (missionsModal.classList.contains('active')) closeMissionsModal();
+      }
+    });
+
+    document.querySelectorAll('.nexus-explore-card[data-view]').forEach(function (card) {
+      card.addEventListener('click', function () {
+        closeExploreModal();
+        goToView(this.getAttribute('data-view'));
+      });
+      card.addEventListener('mouseenter', function () {
+        NexusSound.play('hover');
+      });
+    });
+
+    /* ===== EVENTS MODAL ===== */
+    var eventsModal = document.getElementById('nexus-events-modal-' + id);
+    var eventsBtn = document.getElementById('nexus-events-btn-' + id);
+    var eventsClose = document.getElementById('nexus-events-close-' + id);
+    var eventsOverlay = document.getElementById('nexus-events-overlay-' + id);
+
+    function openEventsModal() {
+      NexusSound.play('click');
+      eventsModal.classList.add('active');
+    }
+
+    function closeEventsModal() {
+      NexusSound.play('click');
+      eventsModal.classList.add('closing');
+      eventsModal.classList.remove('active');
+      setTimeout(function () {
+        eventsModal.classList.remove('closing');
+      }, 400);
+    }
+
+    if (eventsBtn) eventsBtn.addEventListener('click', openEventsModal);
+    if (eventsClose) eventsClose.addEventListener('click', closeEventsModal);
+    if (eventsOverlay) eventsOverlay.addEventListener('click', closeEventsModal);
+
+    document.querySelectorAll('.nexus-event-item').forEach(function (item) {
+      item.addEventListener('mouseenter', function () {
+        NexusSound.play('hover');
+      });
+    });
+
+    /* ===== MISSIONS MODAL ===== */
+    var missionsModal = document.getElementById('nexus-missions-modal-' + id);
+    var missionsBtn = document.getElementById('nexus-missions-btn-' + id);
+    var missionsClose = document.getElementById('nexus-missions-close-' + id);
+    var missionsOverlay = document.getElementById('nexus-missions-overlay-' + id);
+
+    function openMissionsModal() {
+      NexusSound.play('click');
+      missionsModal.classList.add('active');
+    }
+
+    function closeMissionsModal() {
+      NexusSound.play('click');
+      missionsModal.classList.add('closing');
+      missionsModal.classList.remove('active');
+      setTimeout(function () {
+        missionsModal.classList.remove('closing');
+      }, 400);
+    }
+
+    if (missionsBtn) missionsBtn.addEventListener('click', openMissionsModal);
+    if (missionsClose) missionsClose.addEventListener('click', closeMissionsModal);
+    if (missionsOverlay) missionsOverlay.addEventListener('click', closeMissionsModal);
+
+    document.querySelectorAll('.nexus-mission-item').forEach(function (item) {
+      item.addEventListener('mouseenter', function () {
+        NexusSound.play('hover');
+      });
+    });
+
     /* ===== PARTICLES ===== */
     var canvas = document.getElementById('nexus-particles-' + id);
     if (canvas) {
@@ -3304,7 +3639,7 @@
     { "type": "image_picker", "id": "bg_image", "label": "Hero Background Image" },
     { "type": "text", "id": "bg_video", "label": "Hero Background Video URL" },
     { "type": "image_picker", "id": "center_character", "label": "Center Character" },
-    { "type": "text", "id": "tagline", "label": "Tagline", "default": "GEAR UP. SURVIVE. <span>BOOYAH!</span>" },
+    { "type": "liquid", "id": "tagline", "label": "Tagline", "default": "GEAR UP. SURVIVE. <span>BOOYAH!</span>" },
     { "type": "text", "id": "tagline_sub", "label": "Tagline Sub", "default": "OFFICIAL FREE FIRE MERCH STORE" },
     { "type": "text", "id": "cta_text", "label": "CTA Text", "default": "EXPLORE NOW" },
     { "type": "url", "id": "cta_link", "label": "CTA Link" },
