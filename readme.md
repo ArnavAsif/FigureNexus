@@ -1,6 +1,5 @@
 <div align="center">
 
-<img src="assets/hero-desktop.png" alt="BOOYAH — Gear Up. Survive. BOOYAH!" width="100%" />
 
 <br/>
 <br/>
@@ -60,6 +59,10 @@ Every section — Shop, Story, Limited Edition, Product Matching — is a **moda
 <br/>
 
 ---
+
+## 🖥️ Preview — Full Flow
+
+<img src="assets/booyah_flow_stitched.png" alt="BOOYAH Full Page Flow" width="100%" />
 
 <br/>
 
