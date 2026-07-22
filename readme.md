@@ -61,10 +61,6 @@ Every section — Shop, Story, Limited Edition, Product Matching — is a **moda
 
 ---
 
-## 🖥️ Preview — Full Flow
-
-<img src="assets/booyah_flow_stitched.png" alt="BOOYAH Full Page Flow" width="100%" />
-
 <br/>
 
 ---
