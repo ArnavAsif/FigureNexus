@@ -60,6 +60,26 @@
 {%- endif -%}
 
 <link rel="stylesheet" href="{{ 'nexus-hero.css' | asset_url }}">
+<link rel="stylesheet" href="{{ 'nexus-quiz.css' | asset_url }}">
+<script src="{{ 'nexus-quiz.js' | asset_url }}" defer></script>
+<script>
+var NXQ_IMAGES = {};
+{%- for step in (1..6) -%}
+  NXQ_IMAGES["s{{ step }}"] = {};
+  {%- for card in (1..6) -%}
+    {%- assign key = 'quiz_s' | append: step | append: '_c' | append: card -%}
+    {%- if section.settings[key] != blank -%}
+      NXQ_IMAGES["s{{ step }}"]["c{{ card }}"] = "{{ section.settings[key] | image_url: width: 500 }}";
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+{%- if section.settings.quiz_result_logo != blank -%}
+  NXQ_IMAGES["logo"] = "{{ section.settings.quiz_result_logo | image_url: width: 400 }}";
+{%- endif -%}
+{%- if section.settings.quiz_bg_image != blank -%}
+  NXQ_IMAGES["bg"] = "{{ section.settings.quiz_bg_image | image_url: width: 1920 }}";
+{%- endif -%}
+</script>
 <style>
   :root {
     --nx-primary: {{ section.settings.primary_color | default: '#FFC72C' }};
@@ -340,49 +360,7 @@
     </div>
   </div>
 
-  <!-- EXPLORE MODAL -->
-  <div class="nexus-explore-modal" id="nexus-explore-modal-{{ nexus_id }}">
-    <div class="nexus-explore-modal__overlay" id="nexus-explore-overlay-{{ nexus_id }}"></div>
-    <div class="nexus-explore-modal__container">
-      <div class="nexus-explore-modal__header">
-        <h2 class="nexus-explore-modal__title">SELECT YOUR <span>LOADOUT</span></h2>
-        <p class="nexus-explore-modal__subtitle">CHOOSE A CATEGORY TO EXPLORE</p>
-        <button class="nexus-explore-modal__close" id="nexus-explore-close-{{ nexus_id }}">
-          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
-        </button>
-      </div>
-      <div class="nexus-explore-modal__grid">
-        {%- for block in section.blocks -%}
-          <div
-            class="nexus-explore-card"
-            style="--card-color: {{ block.settings.glow_color | default: '#FF7A00' }};"
-            data-view="view-{{ block.id }}"
-          >
-            <div class="nexus-explore-card__glass"></div>
-            <div class="nexus-scanline"></div>
-            {%- if block.settings.card_image != blank -%}
-              <img
-                src="{{ block.settings.card_image | image_url: width: 600 }}"
-                class="nexus-explore-card__img"
-                alt=""
-                loading="lazy"
-              >
-            {%- endif -%}
-            <div class="nexus-explore-card__content">
-              <span
-                class="nexus-explore-card__badge"
-                style="background: {{ block.settings.glow_color | default: '#FF7A00' }}; {% if block.settings.position == 'right' %}color: #111;{% endif %}"
-              >
-                {{- block.settings.badge | default: 'FEATURED' -}}
-              </span>
-              <h3 class="nexus-explore-card__title">{{ block.settings.title }}</h3>
-              <p class="nexus-explore-card__subtitle">{{ block.settings.subtitle }}</p>
-            </div>
-          </div>
-        {%- endfor -%}
-      </div>
-    </div>
-  </div>
+  <!-- QUIZ MODAL (built dynamically by nexus-quiz.js) -->
 
   <!-- EVENTS MODAL -->
   <div class="nexus-events-modal nexus-bottom-modal" id="nexus-events-modal-{{ nexus_id }}">
@@ -3246,47 +3224,33 @@
     var backBtn = document.getElementById('nexus-back-' + id);
     if (backBtn) backBtn.addEventListener('click', goBack);
 
-    /* ===== EXPLORE MODAL ===== */
-    var exploreModal = document.getElementById('nexus-explore-modal-' + id);
+    /* ===== EXPLORE MODAL (Quiz) ===== */
     var exploreBtn = document.getElementById('nexus-explore-btn-' + id);
-    var exploreClose = document.getElementById('nexus-explore-close-' + id);
-    var exploreOverlay = document.getElementById('nexus-explore-overlay-' + id);
-
-    function openExploreModal() {
-      NexusSound.play('click');
-      exploreModal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+    if (exploreBtn) {
+      exploreBtn.addEventListener('click', function () {
+        NexusSound.play('click');
+        /* Ensure quiz script is loaded */
+        if (!window.NexusQuizInit || !window.NexusQuiz) {
+          var s = document.createElement('script');
+          s.src = '{{ "nexus-quiz.js" | asset_url }}';
+          s.onload = function() {
+            if (window.NexusQuizInit) window.NexusQuizInit(id);
+            if (window.NexusQuiz) window.NexusQuiz.open(id);
+          };
+          document.head.appendChild(s);
+        } else {
+          if (window.NexusQuizInit) window.NexusQuizInit(id);
+          if (window.NexusQuiz) window.NexusQuiz.open(id);
+        }
+      });
     }
-
-    function closeExploreModal() {
-      NexusSound.play('click');
-      exploreModal.classList.add('closing');
-      setTimeout(function () {
-        exploreModal.classList.remove('active', 'closing');
-        document.body.style.overflow = '';
-      }, 350);
-    }
-
-    if (exploreBtn) exploreBtn.addEventListener('click', openExploreModal);
-    if (exploreClose) exploreClose.addEventListener('click', closeExploreModal);
-    if (exploreOverlay) exploreOverlay.addEventListener('click', closeExploreModal);
 
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
-        if (exploreModal.classList.contains('active')) closeExploreModal();
+        if (window.NexusQuiz && window.NexusQuiz.close) window.NexusQuiz.close(id);
         if (eventsModal.classList.contains('active')) closeEventsModal();
         if (missionsModal.classList.contains('active')) closeMissionsModal();
       }
-    });
-
-    document.querySelectorAll('.nexus-explore-card[data-view]').forEach(function (card) {
-      card.addEventListener('click', function () {
-        closeExploreModal();
-        goToView(this.getAttribute('data-view'));
-      });
-      card.addEventListener('mouseenter', function () {
-        NexusSound.play('hover');
-      });
     });
 
     /* ===== EVENTS MODAL ===== */
@@ -3646,7 +3610,51 @@
     { "type": "url", "id": "social_facebook", "label": "Facebook URL" },
     { "type": "url", "id": "social_instagram", "label": "Instagram URL" },
     { "type": "url", "id": "social_youtube", "label": "YouTube URL" },
-    { "type": "url", "id": "social_tiktok", "label": "TikTok URL" }
+    { "type": "url", "id": "social_tiktok", "label": "TikTok URL" },
+
+    { "type": "header", "content": "Quiz - Step 1: Player Style Cards" },
+    { "type": "image_picker", "id": "quiz_s1_c1", "label": "Card 1 Image (Aggressive Fighter)" },
+    { "type": "image_picker", "id": "quiz_s1_c2", "label": "Card 2 Image (Sniper)" },
+    { "type": "image_picker", "id": "quiz_s1_c3", "label": "Card 3 Image (Stealth Assassin)" },
+    { "type": "image_picker", "id": "quiz_s1_c4", "label": "Card 4 Image (Squad Leader)" },
+    { "type": "image_picker", "id": "quiz_s1_c5", "label": "Card 5 Image (Collector)" },
+    { "type": "image_picker", "id": "quiz_s1_c6", "label": "Card 6 Image (Casual Player)" },
+
+    { "type": "header", "content": "Quiz - Step 2: Product Type Cards" },
+    { "type": "image_picker", "id": "quiz_s2_c1", "label": "Card 1 Image (Premium Hoodies)" },
+    { "type": "image_picker", "id": "quiz_s2_c2", "label": "Card 2 Image (Graphic T-Shirts)" },
+    { "type": "image_picker", "id": "quiz_s2_c3", "label": "Card 3 Image (Action Figures)" },
+    { "type": "image_picker", "id": "quiz_s2_c4", "label": "Card 4 Image (Weapon Replicas)" },
+    { "type": "image_picker", "id": "quiz_s2_c5", "label": "Card 5 Image (Accessories)" },
+    { "type": "image_picker", "id": "quiz_s2_c6", "label": "Card 6 Image (Gaming Setup)" },
+
+    { "type": "header", "content": "Quiz - Step 3: Theme Cards" },
+    { "type": "image_picker", "id": "quiz_s3_c1", "label": "Card 1 Image (Cyber Future)" },
+    { "type": "image_picker", "id": "quiz_s3_c2", "label": "Card 2 Image (Fire)" },
+    { "type": "image_picker", "id": "quiz_s3_c3", "label": "Card 3 Image (Military)" },
+    { "type": "image_picker", "id": "quiz_s3_c4", "label": "Card 4 Image (Neon)" },
+    { "type": "image_picker", "id": "quiz_s3_c5", "label": "Card 5 Image (Dark Tactical)" },
+    { "type": "image_picker", "id": "quiz_s3_c6", "label": "Card 6 Image (Classic Battle Royale)" },
+
+    { "type": "header", "content": "Quiz - Step 5: Budget Cards" },
+    { "type": "image_picker", "id": "quiz_s5_c1", "label": "Card 1 Image (Starter)" },
+    { "type": "image_picker", "id": "quiz_s5_c2", "label": "Card 2 Image (Standard)" },
+    { "type": "image_picker", "id": "quiz_s5_c3", "label": "Card 3 Image (Premium)" },
+    { "type": "image_picker", "id": "quiz_s5_c4", "label": "Card 4 Image (Unlimited)" },
+
+    { "type": "header", "content": "Quiz - Step 6: Game Mode Cards" },
+    { "type": "image_picker", "id": "quiz_s6_c1", "label": "Card 1 Image (Solo)" },
+    { "type": "image_picker", "id": "quiz_s6_c2", "label": "Card 2 Image (Duo)" },
+    { "type": "image_picker", "id": "quiz_s6_c3", "label": "Card 3 Image (Squad)" },
+    { "type": "image_picker", "id": "quiz_s6_c4", "label": "Card 4 Image (Rank Push)" },
+    { "type": "image_picker", "id": "quiz_s6_c5", "label": "Card 5 Image (Custom Rooms)" },
+    { "type": "image_picker", "id": "quiz_s6_c6", "label": "Card 6 Image (Casual)" },
+
+    { "type": "header", "content": "Quiz - Result Logo" },
+    { "type": "image_picker", "id": "quiz_result_logo", "label": "Result Center Logo (Wings/Shield)" },
+
+    { "type": "header", "content": "Quiz - Background" },
+    { "type": "image_picker", "id": "quiz_bg_image", "label": "Quiz Background Image" }
   ],
   "blocks": [
     {
